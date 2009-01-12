@@ -1,0 +1,26 @@
+#!/bin/sh
+# getcert - Retreive SSL certificate from host
+#
+# Svend Sorensen
+set -e
+
+# Script settings
+
+DEF_PORT=443
+
+# Begin script
+
+progname=$0
+
+if [ $# -eq 0 ]; then
+	echo "Usage: $progname host [port]"
+	echo
+	echo "Get SSL certificate from host.  Default port is $DEF_PORT."
+	exit 1
+fi
+
+host=$1
+port=${2:-$DEF_PORT}
+
+openssl s_client -connect $host:$port 2>&1 </dev/null \
+	| sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p'
