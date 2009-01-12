@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+tmpfile=$(mktemp)
+editor=vim
+
+xclip -o > $tmpfile
+$editor $tmpfile
+xclip -i < $tmpfile
+
+rm -f $tmpfile

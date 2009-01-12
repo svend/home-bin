@@ -1,0 +1,9 @@
+#!/bin/sh
+
+grep '^[a-z]\{3,5\}$' /usr/share/dict/american-english |
+sort -R |
+head -5 |
+while read s; do
+	echo -n "$s "
+done
+echo

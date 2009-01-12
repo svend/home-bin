@@ -1,0 +1,10 @@
+#!/bin/sh
+# Print battery status
+
+status=$(cat /sys/class/power_supply/BAT0/status)
+charge_now=$(cat /sys/class/power_supply/BAT0/charge_now)
+charge_full=$(cat /sys/class/power_supply/BAT0/charge_full)
+charge_percent=$(echo "100 * $charge_now / $charge_full" | bc)
+
+echo "$status" | cut -c-4
+echo "$charge_percent%"

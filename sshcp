@@ -1,0 +1,87 @@
+#!/bin/sh
+# sshcp.sh - Copy file/directory over SSH using tar
+#
+# 2006-03-07 Svend Sorensen
+set -e
+
+# Script settings
+
+TAR_CMD=tar
+#TAR_FLAGS="-v"
+SSH_CMD=ssh
+
+# Begin script
+
+progname=$0
+
+if [ $# -eq 0 ]; then
+	echo "Usage: $progname [[user1@]host1:][dir/]file [[user2@]host2:][dir]"
+	echo
+	echo "Copy file/directory over SSH using tar."
+	exit 0
+elif [ $# -ne 2 ]; then
+	echo "$progname: error: incorrect number of arguments"
+	echo "$progname: run $progname for usage"
+	exit 1
+fi
+
+arg1=$1
+arg2=$2
+
+# Set user1, host1, user2, and host2
+
+user_and_host1=$(echo $arg1 | cut -sd: -f1)
+user_and_host2=$(echo $arg2 | cut -sd: -f1)
+
+if [ ! -z "$user_and_host1" ]; then
+	user1=$(echo $user_and_host1 | cut -sd@ -f1)
+	host1=$(echo $user_and_host1 | cut -d@ -f2)
+fi
+
+if [ ! -z "$user_and_host2" ]; then
+	user2=$(echo $user_and_host2 | cut -sd@ -f1)
+	host2=$(echo $user_and_host2 | cut -d@ -f2)
+fi
+
+# Strip off user@host: from arguments
+arg1=$(echo "$1" | cut -d: -f2)
+arg2=$(echo "$2" | cut -d: -f2)
+
+# Set dir1, file1, and dir2
+
+dir1=$(dirname "$arg1")
+file1=$(basename "$arg1")
+
+dir2=${arg2:-.}
+
+if [ -z "$file1" ]; then
+	echo "$progname: error: First file argument is required"
+	exit 1
+fi
+
+# If hosts are provided use ssh, otherwise execute locally
+
+if [ ! -z "$host1" ]; then
+	# Set -l <user> flag if user was set
+	if [ ! -z "$user1" ]; then
+		user1_flag="-l $user1"
+	fi
+	ssh1="$SSH_CMD $user1_flag $host1"
+else
+	ssh1="eval"
+fi
+
+if [ ! -z "$host2" ]; then
+	# Set -l <user> flag if user was set
+	if [ ! -z "$user2" ]; then
+		user2_flag="-l $user2"
+	fi
+	ssh2="$SSH_CMD $user2_flag $host2"
+else
+	ssh2="eval"
+fi
+
+# Run ssh pipeline
+
+  $ssh1 "$TAR_CMD cf - $TAR_FLAGS -C \"$dir1\" $file1" \
+| $ssh2 "$TAR_CMD xpf - $TAR_FLAGS -C \"$dir2\""

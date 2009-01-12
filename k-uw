@@ -1,0 +1,11 @@
+#!/bin/sh
+
+KRB5CCNAME=/tmp/krb5cc_uw_$UID
+
+if [ -n "$KRB5CCNAME" ]; then
+	screen -X setenv KRB5CCNAME $KRB5CCNAME
+	echo "export KRB5CCNAME=$KRB5CCNAME"
+else
+	screen -X unsetenv KRB5CCNAME
+	echo "unset KRB5CCNAME"
+fi
