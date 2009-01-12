@@ -1,4 +1,5 @@
 #!/bin/sh
+# Print a string of five random words from the system dictionary
 
 grep '^[a-z]\{3,5\}$' /usr/share/dict/american-english |
 sort -R |

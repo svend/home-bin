@@ -1,4 +1,5 @@
 #!/bin/sh
+# Version of ssh-copy-id  which overwrites the authorized_keys file
 
 # Shell script to install your public key on a remote machine
 # Takes the remote machine name as an argument.

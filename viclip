@@ -1,4 +1,5 @@
 #!/bin/sh
+# Edit the contents of the clipboard
 set -e
 
 tmpfile=$(mktemp)
