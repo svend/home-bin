@@ -2,7 +2,7 @@
 set -e
 
 tmpfile=$(mktemp)
-editor=vim
+editor=${VISUAL:-vi}
 
 xclip -o > $tmpfile
 $editor $tmpfile
