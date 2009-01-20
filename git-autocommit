@@ -5,5 +5,5 @@ set -e
 # Add and remove files
 git add -u && git add .
 
-# Commit changes (supress "nothing to commit" message)
+# Commit changes (supress "nothing to commit" message if there are no changes)
 git commit --quiet -m "Auto commit" >/dev/null
