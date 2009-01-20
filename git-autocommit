@@ -1,0 +1,9 @@
+#!/bin/sh
+# Commit current state of working tree
+set -e
+
+# Add and remove files
+git add -u && git add .
+
+# Commit changes (supress "nothing to commit" message)
+git commit --quiet -m "Auto commit" >/dev/null
