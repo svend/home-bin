@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+# Gotta be a better way..
+if [ -e ~/.no-movemail ]; then
+	echo no movemail
+	exit 1
+fi
+
+killall offlineimap 2>/dev/null && sleep 5 || true
+
+offlineimap "$@"
