@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# Run 'openssl x509' for each certificate read through stdin
+
+set -e
+
+TMPFILE=$(mktemp)
+trap 'rm -f "$TMPFILE"' EXIT
+
+seen_begin=false
+seen_end=false
+
+while read line; do
+	case $line in
+	-----BEGIN*)
+		seen_begin=true;
+		;;
+	-----END*)
+		$seen_begin && seen_end=true;
+		;;
+	esac
+
+	if $seen_begin; then
+		echo "$line" >> "$TMPFILE"
+	fi
+
+	if $seen_end; then
+		openssl x509 "$@" < "$TMPFILE"
+		> "$TMPFILE"
+
+		seen_begin=false
+		seen_end=false
+	fi
+done
