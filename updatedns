@@ -12,7 +12,7 @@ dnsaddr=$(curl -sL http://www.ciffer.net/~svend/whatismyip)
 keyfile=$(echo K${dnsname}*.private)
 
 # nsupdate flags.  Use "-v" to force a TCP connection.
-#nsflags="-v"
+nsflags="-v"
 
 # Do a basic validation of the address.  (Check if address is in
 # xxx.xxx.xxx.xxx format.)
