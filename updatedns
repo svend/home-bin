@@ -1,0 +1,44 @@
+#!/bin/sh
+set -e
+
+# Script settings
+
+server=
+zone=
+dnsname=$1
+dnsttl=60
+dnsaddr=$(curl -sL http://www.ciffer.net/~svend/whatismyip)
+
+keyfile=$(echo K${dnsname}*.private)
+
+# nsupdate flags.  Use "-v" to force a TCP connection.
+#nsflags="-v"
+
+# Do a basic validation of the address.  (Check if address is in
+# xxx.xxx.xxx.xxx format.)
+ip_regex='^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
+echo "${dnsaddr}" | egrep -q "${ip_regex}"
+
+# Check if the server was specified.
+if [ -n "${server}" ]; then
+	server_cmd="server ${server}"
+else
+	server_cmd="; no server set"
+fi
+
+# Check if the zone was specified.
+if [ -n "${zone}" ]; then
+	zone_cmd="zone ${zone}"
+else
+	zone_cmd="; no zone set"
+fi
+
+# Perform the update.
+nsupdate ${nsflags} -k "${keyfile}" <<- EOF
+	${server_cmd}
+	${zone_cmd}
+	update delete ${dnsname} A
+	update add ${dnsname} ${dnsttl} A ${dnsaddr}
+	; show
+	send
+EOF
