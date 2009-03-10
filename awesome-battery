@@ -7,25 +7,23 @@ while true; do
 	# awesome, and will fail.
 	if [ -S ~/.awesome_ctl.0 ]; then
 		while true; do
-			status=$(cat /sys/class/power_supply/BAT0/status)
-			charge_now=$(cat /sys/class/power_supply/BAT0/charge_now)
-			charge_full=$(cat /sys/class/power_supply/BAT0/charge_full)
-			charge_percent=$(echo "100 * $charge_now / $charge_full" | bc)
+			status=$(acpi -b | awk '{print $3}')
+			charge_percent=$(acpi -b | grep -o '[0-9]*%')
 
 			case $status in
-			Charging)
+			Charging*)
 				status_text=" +"
 				;;
-			Discharging)
+			Discharging*)
 				status_text=" -"
 				;;
-			*)
+			Full*)
 				status_text=" ="
 				;;
 			esac
 
 			#echo "0 widget_tell mystatusbar battery data bat0 $charge_percent"
-			echo "0 widget_tell mystatusbar battery text $charge_percent% $status_text"
+			echo "0 widget_tell mystatusbar battery text $charge_percent $status_text"
 			echo "" # an empty line flushes data inside awesome
 			sleep $sleepsec
 		done | awesome-client
