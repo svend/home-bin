@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+if [ $# -eq 0 ]; then
+	# Process stdin
+	gpg --decrypt
+else
+	# Process each argument
+	for f in "$@"; do
+		gpg --decrypt "$f"
+	done
+fi
