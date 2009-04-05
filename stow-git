@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # GNU Stow - manage the installation of multiple software packages
 # Copyright (C) 1993, 1994, 1995, 1996 by Bob Glickstein
