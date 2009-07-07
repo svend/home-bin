@@ -1,6 +1,0 @@
-#!/bin/sh
-# Print battery status
-
-battery=$(acpi -b)
-
-echo "$battery"
