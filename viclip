@@ -5,8 +5,8 @@ set -e
 tmpfile=$(mktemp)
 editor=${VISUAL:-vi}
 
-xclip -o > $tmpfile
+xclip -o -selection clipboard > $tmpfile
 $editor $tmpfile
-xclip -i < $tmpfile
+xclip -i -selection clipboard < $tmpfile
 
 rm -f $tmpfile
