@@ -18,7 +18,7 @@ setclip()
 		;;
 	*)
 		# Linux
-		cat | xclip -i
+		cat | xclip -i -selection clipboard
 		;;
 	esac
 }
@@ -32,7 +32,7 @@ clearclip()
 		;;
 	*)
 		# Linux
-		xclip -i < /dev/null
+		xclip -i -selection clipboard < /dev/null
 		;;
 	esac
 }
