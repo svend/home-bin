@@ -12,13 +12,10 @@ print_results()
 		case "$s" in
 		dn:*)
 			# New entry
-			if [ -n "$mail" -a -n "$name" ]; then
-				echo "$name <$mail>"
-			fi
 
 			# Clear all variables
-			mail=
 			name=
+			mail=
 			;;
 		mail:*)
 			mail=${s#mail:[ 	]*}
@@ -27,6 +24,13 @@ print_results()
 			name=${s#cn:[ 	]*}
 			;;
 		esac
+
+		# Print result if we have both a name and an email address
+		# FIXME: Won't work if name comes after multiple email addresses
+		if [ -n "$mail" -a -n "$name" ]; then
+			echo "$name <$mail>"
+			mail=
+		fi
 	done
 
 	# Catch last entry
