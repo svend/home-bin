@@ -1,0 +1,4 @@
+#!/bin/sh
+# Sort blocks (paragraphs)
+
+msort --suppress-log --quiet --block --position 1 "$@"
