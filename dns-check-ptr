@@ -8,7 +8,7 @@ is_addr()
 	grep -q -e '[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*'
 }
 
-# Check that the PTR string matches for the IP addresses given
+# Check that the PTR string matches for the given IP addresses
 check_addr_ptr()
 {
 	addr=$1
@@ -34,7 +34,7 @@ check_addr_ptr()
 	fi
 }
 
-# Check that the PTR string matches for the name given
+# Check that the PTR string matches for the given name
 check_name_ptr()
 {
 	name=$1
