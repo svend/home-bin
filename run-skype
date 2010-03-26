@@ -1,5 +1,5 @@
 #!/bin/sh
 set -e
 
-xauth extract - $DISPLAY | sudo -u skype -H env XAUTHORITY=/var/lib/skype/.Xauthority xauth merge -
-sudo -u skype -H env XAUTHORITY=/var/lib/skype/.Xauthority skype
+xauth extract - $DISPLAY | env XAUTHORITY=/var/lib/skype/.Xauthority sudo -u skype -H xauth merge -
+XAUTHORITY=/var/lib/skype/.Xauthority sudo -u skype -H skype
