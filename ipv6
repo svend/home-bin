@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+do_start()
+{
+	/etc/init.d/aiccu start
+	/etc/init.d/ssh start
+}
+
+do_stop()
+{
+	/etc/init.d/ssh stop
+	/etc/init.d/aiccu stop
+}
+
+case "$1" in
+start)
+	do_start
+	;;
+stop)
+	do_stop
+	;;
+*)
+	echo "Usage: $0 {start|stop}"
+esac
