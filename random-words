@@ -1,5 +1,6 @@
 #!/bin/sh
 # Print a string of five random words from the system dictionary
+set -e
 
 num=${1:-5}
 
