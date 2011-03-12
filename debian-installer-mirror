@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+MIRROR=http://ftp.nl.debian.org/debian
+RELEASE=squeeze
+
+wget -r -np -nc -nH --cut-dirs=4 \
+	$MIRROR/dists/$RELEASE/main/installer-amd64/current/images/MANIFEST \
+	$MIRROR/dists/$RELEASE/main/installer-amd64/current/images/netboot/debian-installer/amd64/
