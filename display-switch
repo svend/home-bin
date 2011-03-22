@@ -7,7 +7,7 @@ vga)
 	;;
 both)
 	xrandr --output LVDS1 --auto
-	xrandr --output VGA1 --auto --above LVDS1
+	xrandr --output VGA1 --auto --right-of LVDS1
 	;;
 laptop)
 	xrandr --output LVDS1 --auto
