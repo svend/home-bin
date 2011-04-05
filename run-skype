@@ -1,5 +1,0 @@
-#!/bin/sh
-set -e
-
-xauth extract - $DISPLAY | env -u XAUTHORITY sudo -u skype -H xauth merge -
-env -u XAUTHORITY sudo -u skype -H skype
