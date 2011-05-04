@@ -2,4 +2,4 @@
 # tmux wrapper: Run a command in a split window
 set -e
 
-eval tmux split-window -h \'$@\'
+tmux split-window -h "exec $*"
