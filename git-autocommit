@@ -5,6 +5,8 @@ set -e
 # Add and remove files
 git add -u
 git add .
+# git 1.6.0 added the --all flag which does the work of both commands
+# git add --all .
 
 # Commit changes (supress "nothing to commit" message if there are no changes)
 git commit --quiet -m "Auto commit" >/dev/null
