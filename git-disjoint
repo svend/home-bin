@@ -1,6 +1,6 @@
 #!/bin/sh
 
-USAGE='restore|foreach|switch [<args>]'
+USAGE='foreach|new|restore|switch [<args>]'
 . git-sh-setup
 
 switch_branch ()
@@ -36,6 +36,14 @@ cmd_foreach ()
 	switch_branch "$cur_branch"
 }
 
+cmd_new ()
+{
+	branch=$1
+
+	git symbolic-ref HEAD "refs/heads/$branch"
+	rm -f "$GIT_DIR/index"
+}
+
 # Switch branches without touching the working tree
 cmd_switch ()
 {
@@ -46,7 +54,7 @@ cmd_switch ()
 command=
 
 case "$1" in
-restore|foreach|switch)
+foreach|new|restore|switch)
 	command=$1
 	;;
 *)
