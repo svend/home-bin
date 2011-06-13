@@ -1,0 +1,58 @@
+#!/bin/sh
+
+USAGE='restore|foreach|switch [<args>]'
+. git-sh-setup
+
+switch_branch ()
+{
+	ref=$1
+	git symbolic-ref HEAD "$ref" && git reset HEAD
+}
+
+# Restore any files missing from the working tree
+cmd_restore ()
+{
+	branch=$1
+
+	cur_branch=$(git symbolic-ref -q HEAD)
+
+	switch_branch "refs/heads/$branch"
+	git ls-files -z -d | xargs -0 git checkout --
+
+	switch_branch "$cur_branch"
+}
+
+# Run command on each branch
+cmd_foreach ()
+{
+	cur_branch=$(git symbolic-ref -q HEAD)
+
+	git for-each-ref --format='%(refname)' refs/heads |
+	while read ref; do
+		switch_branch "$ref"
+		eval "$@"
+	done
+
+	switch_branch "$cur_branch"
+}
+
+# Switch branches without touching the working tree
+cmd_switch ()
+{
+	branch=$1
+	switch_branch "refs/heads/$branch"
+}
+
+command=
+
+case "$1" in
+restore|foreach|switch)
+	command=$1
+	;;
+*)
+	usage
+	;;
+esac
+shift
+
+"cmd_$command" "$@"
