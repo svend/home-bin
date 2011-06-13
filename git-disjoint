@@ -1,11 +1,15 @@
 #!/bin/sh
 
 USAGE='foreach|new|restore|switch [<args>]'
+
+PATH=$PATH:$(git --exec-path)
 . git-sh-setup
 
 switch_branch ()
 {
 	ref=$1
+	# Check if branch exists
+	git show-ref --verify --quiet "$ref" || exit $?
 	git symbolic-ref HEAD "$ref" && git reset HEAD
 }
 
