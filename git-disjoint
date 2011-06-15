@@ -1,6 +1,6 @@
 #!/bin/sh
 
-USAGE='foreach|new|restore|switch [<args>]'
+USAGE='find|foreach|new|restore|switch [<args>]'
 
 PATH=$PATH:$(git --exec-path)
 . git-sh-setup
@@ -13,17 +13,14 @@ switch_branch ()
 	git symbolic-ref HEAD "$ref" && git reset HEAD
 }
 
-# Restore any files missing from the working tree
-cmd_restore ()
+# Search for path in each branch
+cmd_find ()
 {
-	branch=$1
-
-	cur_branch=$(git symbolic-ref -q HEAD)
-
-	switch_branch "refs/heads/$branch"
-	git ls-files -z -d | xargs -0 git checkout --
-
-	switch_branch "$cur_branch"
+	git for-each-ref --format='%(refname:short)' refs/heads |
+	while read ref; do
+		git ls-tree -r --name-only "refs/heads/$ref" |
+		grep -q "$@" && echo "$ref"
+	done
 }
 
 # Run command on each branch
@@ -40,12 +37,26 @@ cmd_foreach ()
 	switch_branch "$cur_branch"
 }
 
+# Create empty branch
 cmd_new ()
 {
 	branch=$1
 
 	git symbolic-ref HEAD "refs/heads/$branch"
 	rm -f "$GIT_DIR/index"
+}
+
+# Restore any files missing from the working tree
+cmd_restore ()
+{
+	branch=$1
+
+	cur_branch=$(git symbolic-ref -q HEAD)
+
+	switch_branch "refs/heads/$branch"
+	git ls-files -z -d | xargs -0 git checkout --
+
+	switch_branch "$cur_branch"
 }
 
 # Switch branches without touching the working tree
@@ -58,7 +69,7 @@ cmd_switch ()
 command=
 
 case "$1" in
-foreach|new|restore|switch)
+find|foreach|new|restore|switch)
 	command=$1
 	;;
 *)
