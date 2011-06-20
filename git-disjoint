@@ -10,7 +10,7 @@ switch_branch ()
 	ref=$1
 	# Check if branch exists
 	git show-ref --verify --quiet "$ref" || exit $?
-	git symbolic-ref HEAD "$ref" && git reset HEAD
+	git symbolic-ref HEAD "$ref" && git reset --quiet HEAD
 }
 
 # Search for path in each branch
