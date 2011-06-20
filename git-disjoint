@@ -16,10 +16,14 @@ switch_branch ()
 # Search for path in each branch
 cmd_find ()
 {
-	git for-each-ref --format='%(refname:short)' refs/heads |
-	while read ref; do
-		git ls-tree -r --name-only "refs/heads/$ref" |
-		grep -q "$@" && echo "$ref"
+	for s in "$@"; do
+		git for-each-ref --format='%(refname:short)' refs/heads |
+		while read ref; do
+			git ls-tree -r --name-only "refs/heads/$ref" "$s" |
+			while read f; do
+				echo "$ref: $f"
+			done
+		done
 	done
 }
 
