@@ -46,7 +46,7 @@ cmd_new ()
 	rm -f "$GIT_DIR/index"
 }
 
-# Restore any files missing from the working tree
+# Restore any missing (deleted) files to the working tree
 cmd_restore ()
 {
 	branch=$1
