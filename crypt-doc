@@ -2,16 +2,19 @@
 
 set -e
 
+UUID=4d8c0053-aff4-4ed7-bd77-e82213eb149c
+NAME=crypt-doc
+
 cmd_close()
 {
-	sudo udisks --unmount /dev/disk/by-id/dm-name-sdb1-crypt
-	sudo cryptsetup luksClose sdb1-crypt
+	sudo udisks --unmount /dev/disk/by-uuid/$UUID
+	sudo cryptsetup luksClose crypt-doc
 }
 
 cmd_open()
 {
-	gpg -d $HOME/key.gpg | sudo cryptsetup --key-file=- luksOpen /dev/sdb1 sdb1-crypt
-	sudo udisks --mount /dev/disk/by-id/dm-name-sdb1-crypt
+	gpg -d $HOME/.private/udisks/key.gpg | sudo cryptsetup --key-file=- luksOpen /dev/disk/by-uuid/$UUID $NAME
+	sudo udisks --mount /dev/disk/by-id/dm-name-$NAME
 }
 
 case "$1" in
