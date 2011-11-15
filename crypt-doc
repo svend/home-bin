@@ -7,7 +7,7 @@ NAME=crypt-doc
 
 cmd_close()
 {
-	sudo udisks --unmount /dev/disk/by-uuid/$UUID
+	sudo udisks --unmount /dev/disk/by-id/dm-name-$NAME
 	sudo cryptsetup luksClose crypt-doc
 }
 
