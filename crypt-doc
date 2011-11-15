@@ -2,27 +2,48 @@
 
 set -e
 
-UUID=4d8c0053-aff4-4ed7-bd77-e82213eb149c
+#UUID=
+#DEV=
 NAME=crypt-doc
 
 cmd_close()
 {
-	sudo udisks --unmount /dev/disk/by-id/dm-name-$NAME
-	sudo cryptsetup luksClose crypt-doc
+	# Try to close luks device, even if udisks fails
+	sudo udisks --unmount /dev/mapper/luks-uuid-$UUID || true
+	sudo cryptsetup luksClose luks-uuid-$UUID
 }
 
 cmd_open()
 {
-	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file=- luksOpen /dev/disk/by-uuid/$UUID $NAME
-	sudo udisks --mount /dev/disk/by-id/dm-name-$NAME
+	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg |
+	sudo cryptsetup --key-file=- luksOpen /dev/disk/by-uuid/$UUID luks-uuid-$UUID
+	sudo udisks --mount /dev/mapper/luks-uuid-$UUID
 }
 
+cmd_format()
+{
+	head -c 256 /dev/random | gpg -e > $HOME/.private/udisks/key.$DEV.gpg
+
+	# luksFormat changes partition UUID
+	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file - luksFormat /dev/$DEV
+	UUID=$(sudo sudo blkid -o value -s UUID /dev/$DEV)
+
+	mv $HOME/.private/udisks/key.$DEV.gpg $HOME/.private/udisks/key.$UUID.gpg
+	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file=- luksOpen /dev/disk/by-uuid/$UUID $NAME
+	sudo mkfs.ext4 -L $NAME /dev/disk/by-uuid/$UUID
+}
+
+if [ -z "$UUID" ]; then
+	echo "UUID is not set"
+	exit 3
+fi
+
 case "$1" in
-close|open)
+close|open|format)
 	command=$1
 	;;
 *)
-	echo "Usage: $0 {close|open}" >&2
+	echo "Usage: $0 {close|open|newkey}" >&2
 	exit 3
 	;;
 esac
