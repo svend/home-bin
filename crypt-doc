@@ -13,7 +13,7 @@ cmd_close()
 
 cmd_open()
 {
-	gpg -d $HOME/.private/udisks/key.gpg | sudo cryptsetup --key-file=- luksOpen /dev/disk/by-uuid/$UUID $NAME
+	gpg -d $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file=- luksOpen /dev/disk/by-uuid/$UUID $NAME
 	sudo udisks --mount /dev/disk/by-id/dm-name-$NAME
 }
 
