@@ -2,10 +2,6 @@
 
 set -e
 
-#UUID=
-#DEV=
-NAME=crypt-doc
-
 cmd_close()
 {
 	# Try to close luks device, even if udisks fails
@@ -24,26 +20,28 @@ cmd_format()
 {
 	head -c 256 /dev/random | gpg -e > $HOME/.private/udisks/key.$DEV.gpg
 
-	# luksFormat changes partition UUID
 	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file - luksFormat /dev/$DEV
-	UUID=$(sudo sudo blkid -o value -s UUID /dev/$DEV)
+	# luksFormat changes partition UUID
+	UUID=$(sudo blkid -o value -s UUID /dev/$DEV)
 
 	mv $HOME/.private/udisks/key.$DEV.gpg $HOME/.private/udisks/key.$UUID.gpg
-	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file=- luksOpen /dev/disk/by-uuid/$UUID $NAME
-	sudo mkfs.ext4 -L $NAME /dev/disk/by-uuid/$UUID
+	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file=- luksOpen /dev/disk/by-uuid/$UUID luks-uuid-$UUID
+	sudo mkfs.ext4 /dev/disk/by-uuid/luks-uuid-$UUID
 }
 
-if [ -z "$UUID" ]; then
-	echo "UUID is not set"
-	exit 3
-fi
-
 case "$1" in
-close|open|format)
+close|open)
+	: ${UUID:?"UUID must be set"}
+
+	command=$1
+	;;
+format)
+	: ${DEV:?"DEV must be set"}
+
 	command=$1
 	;;
 *)
-	echo "Usage: $0 {close|open|newkey}" >&2
+	echo "Usage: $0 {close|open|format}" >&2
 	exit 3
 	;;
 esac
