@@ -12,7 +12,7 @@ cmd_close()
 cmd_open()
 {
 	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg |
-	sudo cryptsetup --key-file=- luksOpen /dev/disk/by-uuid/$UUID luks-uuid-$UUID
+	sudo cryptsetup --key-file - luksOpen /dev/disk/by-uuid/$UUID luks-uuid-$UUID
 	sudo udisks --mount /dev/mapper/luks-uuid-$UUID
 }
 
@@ -25,7 +25,7 @@ cmd_format()
 	UUID=$(sudo blkid -o value -s UUID /dev/$DEV)
 
 	mv $HOME/.private/udisks/key.$DEV.gpg $HOME/.private/udisks/key.$UUID.gpg
-	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file=- luksOpen /dev/disk/by-uuid/$UUID luks-uuid-$UUID
+	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file - luksOpen /dev/disk/by-uuid/$UUID luks-uuid-$UUID
 	sudo mkfs.ext4 /dev/disk/by-uuid/luks-uuid-$UUID
 }
 
