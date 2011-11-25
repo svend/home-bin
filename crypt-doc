@@ -18,13 +18,13 @@ cmd_open()
 
 cmd_format()
 {
-	head -c 256 /dev/random | gpg -e > $HOME/.private/udisks/key.$DEV.gpg
+	head -c 256 /dev/random | gpg -e > $HOME/.private/udisks/key.tmp.gpg
 
 	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file - luksFormat /dev/$DEV
 	# luksFormat changes partition UUID
 	UUID=$(sudo blkid -o value -s UUID /dev/$DEV)
 
-	mv $HOME/.private/udisks/key.$DEV.gpg $HOME/.private/udisks/key.$UUID.gpg
+	mv $HOME/.private/udisks/key.tmp.gpg $HOME/.private/udisks/key.$UUID.gpg
 	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file - luksOpen /dev/disk/by-uuid/$UUID luks-uuid-$UUID
 	sudo mkfs.ext4 /dev/disk/by-uuid/luks-uuid-$UUID
 }
