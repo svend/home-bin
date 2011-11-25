@@ -11,8 +11,10 @@ cmd_close()
 
 cmd_open()
 {
+	DEV=$(/sbin/blkid -U $UUID)
+
 	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg |
-	sudo cryptsetup --key-file - luksOpen /dev/disk/by-uuid/$UUID luks-uuid-$UUID
+	sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID
 	sudo udisks --mount /dev/mapper/luks-uuid-$UUID
 }
 
