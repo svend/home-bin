@@ -22,7 +22,7 @@ cmd_format()
 {
 	head -c 256 /dev/random | gpg -e > $HOME/.private/udisks/key.tmp.gpg
 
-	gpg -d -q $HOME/.private/udisks/key.$UUID.gpg | sudo cryptsetup --key-file - luksFormat /dev/$DEV
+	gpg -d -q $HOME/.private/udisks/key.tmp.gpg | sudo cryptsetup --key-file - luksFormat $DEV
 	# luksFormat changes partition UUID
 	UUID=$(sudo blkid -o value -s UUID /dev/$DEV)
 
