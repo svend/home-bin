@@ -1,0 +1,8 @@
+#!/bin/sh
+# Wrapper to run puppet from git checkout
+
+if [ -x /usr/bin/puppet ]; then
+	/usr/bin/puppet "$@"
+else
+	RUBYLIB=$HOME/src/misc/facter/lib:$HOME/src/misc/puppet/lib $HOME/src/misc/puppet/bin/puppet "$@"
+fi
