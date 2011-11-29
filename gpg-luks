@@ -2,11 +2,18 @@
 
 set -e
 
+is_uuid()
+{
+	expr $1 : '\w\{8\}-\w\{4\}-\w\{4\}-\w\{4\}-\w\{12\}$'
+}
+
 cmd_close()
 {
-	DEV=$1
-
-	UUID=$(/sbin/blkid -o value -s UUID $DEV)
+	if is_uuid $1; then
+		UUID=$1
+	else
+		UUID=$(/sbin/blkid -o value -s UUID $DEV)
+	fi
 
 	# Try to close luks device, even if udisks fails
 	sudo udisks --unmount /dev/disk/by-id/dm-name-luks-uuid-$UUID || true
@@ -15,10 +22,15 @@ cmd_close()
 
 cmd_open()
 {
-	DEV=$1
+	if is_uuid $1; then
+		UUID=$1
+		DEV=$(/sbin/blkid -U $UUID)
+	else
+		DEV=$1
+		UUID=$(/sbin/blkid -o value -s UUID $DEV)
+	fi
 	KEY=$2
 
-	UUID=$(/sbin/blkid -o value -s UUID $DEV)
 
 	gpg -d -q $KEY |
 	sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID
@@ -27,7 +39,13 @@ cmd_open()
 
 cmd_format()
 {
-	DEV=$1
+	if is_uuid $1; then
+		UUID=$1
+		DEV=$(/sbin/blkid -U $UUID)
+	else
+		DEV=$1
+		UUID=$(/sbin/blkid -o value -s UUID $DEV)
+	fi
 	KEY=$2
 
 	head -c 256 /dev/random | gpg -e > $KEY
@@ -49,9 +67,9 @@ format)
 	command=$1
 	;;
 *)
-	echo "Usage: $0 open <dev> <keyfile>" >&2
-	echo "Usage: $0 close <dev>" >&2
-	echo "Usage: $0 format <dev> <keyfile>" >&2
+	echo "Usage: $0 open <device|UUID> <keyfile>" >&2
+	echo "Usage: $0 close <device|UUID>" >&2
+	echo "Usage: $0 format <device|UUID> <keyfile>" >&2
 	exit 3
 	;;
 esac
