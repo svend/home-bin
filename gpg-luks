@@ -12,7 +12,7 @@ cmd_close()
 	if is_uuid $1; then
 		UUID=$1
 	else
-		UUID=$(/sbin/blkid -o value -s UUID $DEV)
+		UUID=$(sudo blkid -o value -s UUID $DEV)
 	fi
 
 	# Try to close luks device, even if udisks fails
@@ -24,10 +24,10 @@ cmd_open()
 {
 	if is_uuid $1; then
 		UUID=$1
-		DEV=$(/sbin/blkid -U $UUID)
+		DEV=$(sudo blkid -U $UUID)
 	else
 		DEV=$1
-		UUID=$(/sbin/blkid -o value -s UUID $DEV)
+		UUID=$(sudo blkid -o value -s UUID $DEV)
 	fi
 	KEY=$2
 
@@ -41,10 +41,10 @@ cmd_format()
 {
 	if is_uuid $1; then
 		UUID=$1
-		DEV=$(/sbin/blkid -U $UUID)
+		DEV=$(sudo blkid -U $UUID)
 	else
 		DEV=$1
-		UUID=$(/sbin/blkid -o value -s UUID $DEV)
+		UUID=$(sudo blkid -o value -s UUID $DEV)
 	fi
 	KEY=$2
 
@@ -52,7 +52,7 @@ cmd_format()
 
 	gpg -d -q $KEY | sudo cryptsetup --key-file - luksFormat $DEV
 	# luksFormat changes partition UUID
-	UUID=$(/sbin/blkid -o value -s UUID $DEV)
+	UUID=$(sudo blkid -o value -s UUID $DEV)
 
 	gpg -d -q $KEY |
 	sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID
