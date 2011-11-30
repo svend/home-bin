@@ -33,7 +33,7 @@ cmd_open()
 
 
 	gpg -d -q $KEY |
-	sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID
+	sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID || true
 	sudo udisks --mount /dev/mapper/luks-uuid-$UUID
 }
 
