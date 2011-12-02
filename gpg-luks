@@ -44,7 +44,6 @@ cmd_format()
 		DEV=$(sudo blkid -U $UUID)
 	else
 		DEV=$1
-		UUID=$(sudo blkid -o value -s UUID $DEV)
 	fi
 	KEY=$2
 
