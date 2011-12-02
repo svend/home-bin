@@ -58,10 +58,7 @@ cmd_format()
 }
 
 case "$1" in
-close|open)
-	command=$1
-	;;
-format)
+close|format|open)
 	command=$1
 	;;
 *)
