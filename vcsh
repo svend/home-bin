@@ -157,6 +157,7 @@ setup() {
 	git config core.excludesfile ".gitignore.d/$VCSH_REPO_NAME"
 	git config vcsh.vcsh         'true'
 	[ -e "$VCSH_BASE/.gitignore.d/$VCSH_REPO_NAME" ] && git add -f "$VCSH_BASE/.gitignore.d/$VCSH_REPO_NAME"
+	echo '/*' >> $GIT_DIR/info/exclude
 }
 
 use() {
