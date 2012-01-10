@@ -12,7 +12,7 @@ if [ "-i" = "$1" ]; then
   shift
   # check if we have 2 parameters left, if so the first is the new ID file
   if [ -n "$2" ]; then
-    if expr "$1" : ".*\.pub" >/dev/null; then
+    if expr "$1" : ".*\.pub" > /dev/null ; then
       ID_FILE="$1"
     else
       ID_FILE="$1.pub"
@@ -39,10 +39,10 @@ if [ "$#" -lt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   exit 1
 fi
 
-{ eval "$GET_ID" ; } | ssh $1 "umask 077; test -d .ssh || mkdir .ssh ; cat > .ssh/authorized_keys" || exit 1
+{ eval "$GET_ID" ; } | ssh ${1%:} "umask 077; test -d .ssh || mkdir .ssh ; cat > .ssh/authorized_keys" || exit 1
 
 cat <<EOF
-Now try logging into the machine, with "ssh '$1'", and check in:
+Now try logging into the machine, with "ssh '${1%:}'", and check in:
 
   .ssh/authorized_keys
 
