@@ -1,0 +1,3 @@
+#!/bin/sh
+
+sudo apt-get -t squeeze-backports install virtualbox-guest-x11 linux-headers-2.6.32-5-486
