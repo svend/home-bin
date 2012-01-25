@@ -1,15 +1,19 @@
 #!/bin/sh
 
 # This program is licensed under the GNU GPL version 2 or later.
-# (c) Richard "RichiH" Hartmann, 2011
+# (c) Richard "RichiH" Hartmann <richih.mailinglist@gmail.com>, 2011-2012
 # For details, see LICENSE. To submit patches, you have to agree to
 # license your code under the GNU GPL version 2 or later.
 
 
-[ -n "$VCSH_DEBUG" ]      && set -vx
-[ -z "$XDG_CONFIG_HOME" ] && XDG_CONFIG_HOME="$HOME/.config"
-[ -z "$VCSH_REPO_D" ]     && VCSH_REPO_D="$XDG_CONFIG_HOME/vcsh/repo.d"
-[ -z "$VCSH_BASE" ]       && VCSH_BASE="$HOME"
+[ -n "$VCSH_DEBUG" ]                  && set -vx
+[ -z "$XDG_CONFIG_HOME" ]             && XDG_CONFIG_HOME="$HOME/.config"
+[ -r "$XDG_CONFIG_HOME/vcsh/config" ] && . "$XDG_CONFIG_HOME/vcsh/config"
+[ -n "$VCSH_DEBUG" ]                  && set -vx
+[ -z "$VCSH_REPO_D" ]                 && VCSH_REPO_D="$XDG_CONFIG_HOME/vcsh/repo.d"
+[ -z "$VCSH_HOOK_D" ]                 && VCSH_HOOK_D="$XDG_CONFIG_HOME/vcsh/hooks-enabled"
+[ -z "$VCSH_BASE" ]                   && VCSH_BASE="$HOME"
+[ -z "$VCSH_GITIGNORE" ]              && VCSH_GITIGNORE='exact'
 
 SELF=$(basename $0)
 
@@ -100,12 +104,21 @@ To continue, type \"Yes, do as I say\""
 }
 
 enter() {
+	hook pre-enter
 	use
 	$SHELL
+	hook post-enter
 }
 
 git_dir_exists() {
 	[ -d "$GIT_DIR" ] || fatal "no repository found for '$VCSH_REPO_NAME'" 12
+}
+
+hook() {
+	for hook in $VCSH_HOOK_D/$1* $VCSH_HOOK_D/$VCSH_REPO_NAME.$1*; do
+		[ -x "$hook" ] || continue
+		"$hook"
+	done
 }
 
 init() {
@@ -147,16 +160,20 @@ rename() {
 }
 
 run() {
+	hook pre-run
 	use
 	$VCSH_EXTERNAL_COMMAND
+	hook post-run
 }
 
 setup() {
+	hook pre-setup
 	use
 	git config core.worktree     "$GIT_WORK_TREE"
 	git config core.excludesfile ".gitignore.d/$VCSH_REPO_NAME"
 	git config vcsh.vcsh         'true'
 	[ -e "$VCSH_BASE/.gitignore.d/$VCSH_REPO_NAME" ] && git add -f "$VCSH_BASE/.gitignore.d/$VCSH_REPO_NAME"
+	hook post-setup
 }
 
 use() {
@@ -179,7 +196,9 @@ write_gitignore() {
 	echo '*' > "$tempfile" || fatal "could not write to '$tempfile'" 57
 	for gitignore in $gitignores; do
 		echo "$gitignore" | sed 's/^/!/' >> "$tempfile" || fatal "could not write to '$tempfile'" 57
-		[ -d "$gitignore" ] && { echo "$gitignore/*" | sed 's/^/!/' >> "$tempfile" || fatal "could not write to '$tempfile'" 57; }
+		if [ x$VCSH_GITIGNORE = x'recursive' ] && [ -d "$gitignore" ]; then
+			{ echo "$gitignore/*" | sed 's/^/!/' >> "$tempfile" || fatal "could not write to '$tempfile'" 57; }
+		fi
 	done
 	if diff -N "$tempfile" "$VCSH_BASE/.gitignore.d/$VCSH_REPO_NAME" > /dev/null; then
 		rm -f "$tempfile" || error "could not delete '$tempfile'"
@@ -193,6 +212,10 @@ write_gitignore() {
 	mv -f "$tempfile" "$VCSH_BASE/.gitignore.d/$VCSH_REPO_NAME" ||
 		fatal "could not move '$tempfile' to '$VCSH_BASE/.gitignore.d/$VCSH_REPO_NAME'" 53
 }
+
+if [ ! x$VCSH_GITIGNORE = x'exact' ] && [ ! x$VCSH_GITIGNORE = x'recursive' ]; then
+	fatal "\$VCSH_GITIGNORE must be either 'exact' or 'recursive'" 1
+fi
 
 if [ "$1" = 'clone' ]; then
 	[ -z $2 ] && fatal "$1: please specify a remote" 1
