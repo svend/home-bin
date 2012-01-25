@@ -4,13 +4,13 @@
 gen_mrconfig ()
 {
 	while read s; do
-		echo "[$(dirname $s)]"
-		echo "checkout = git clone gitolite@git.ciffer.net:$s.git"
+		echo "[$(basename $s)]"
+		echo "checkout = git clone ssh://git@git.ciffer.net/$s.git"
 		echo
 	done
 }
 
-ssh gitolite@git.ciffer.net info |
+ssh git@git.ciffer.net expand |
 # gitolite outputs list with DOS line endings
 tr -d '\r' |
 # Last field contains the repo name
