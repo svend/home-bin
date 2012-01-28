@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+
+# Update repository
+git fetch
+
+# Find latest tag
+tag=$(git for-each-ref --sort='*authordate' --format='%(tag)' refs/tags | tail -n1)
+
+if [ -z "$tag" ]; then
+	echo "Error: no tags found"
+	exit 1
+fi
+
+# Verify tag
+git verify-tag "$tag" || exit 1
+
+# Fast-forward to tag
+git merge --ff-only "$tag"
