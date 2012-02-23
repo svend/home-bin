@@ -9,4 +9,4 @@ git add .
 # git add --all .
 
 # Commit changes (supress "nothing to commit" message if there are no changes)
-git commit --quiet -m "Auto commit" >/dev/null
+git commit --quiet -m "Auto commit" >/dev/null || true
