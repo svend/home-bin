@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Variable list taken from tmux 1.5
+for name in DISPLAY SSH_ASKPASS SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY; do
+    value=$(eval echo \$$name)
+    if [ -n "$value" ]; then
+        emacsclient -e "(setenv \"$name\" \"$value\")"
+    fi
+done
+
+emacsclient "$@"

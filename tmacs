@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+ALTERNATE_EDITOR=''
+
+# Save the current window index
+window=$(tmux list-windows | grep '(active)$' | cut -d: -f1)
+
+if [ -n "$TMUX" ]; then
+    tmux select-window -t emacsclient
+    emacsclient "$@"
+    tmux select-window -t :$window
+else
+    emacsclient "$@"
+fi
