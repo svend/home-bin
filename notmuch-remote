@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Run notmuch on remote host
+#
+# http://notmuchmail.org/remoteusage/
+#
+# (setq notmuch-command "notmuch-remote)
+# 
+# Start a ControlMaster connection first:
+#
+# ssh -o "ControlMaster auto" host "sleep 10000"
+
+ssh garnet.ciffer.net "notmuch $@"
