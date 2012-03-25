@@ -4,10 +4,13 @@
 #
 # http://notmuchmail.org/remoteusage/
 #
-# (setq notmuch-command "notmuch-remote)
-# 
+# Put (setq notmuch-command "notmuch-remote) in emacs configuration.
+
 # Start a ControlMaster connection first:
+# TODO: This will start a new ssh connection each time.
+# ssh -Nf -o "ControlMaster yes" garnet.ciffer.net || true
 #
-# ssh -o "ControlMaster auto" host "sleep 10000"
+# ControlPersist option (in OpenSSH 5.6) would be very useful here,
+# but that option is available in Debian squeeze.
 
 ssh garnet.ciffer.net "notmuch $@"
