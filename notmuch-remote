@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Run notmuch on remote host
 #
@@ -13,4 +13,6 @@
 # ControlPersist option (in OpenSSH 5.6) would be very useful here,
 # but that option is available in Debian squeeze.
 
-ssh garnet.ciffer.net "notmuch $@"
+# This requires the bash version of printf
+printf -v ARGS "%q " "$@"
+ssh garnet.ciffer.net notmuch $ARGS
