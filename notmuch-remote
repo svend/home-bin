@@ -13,6 +13,6 @@
 # ControlPersist option (in OpenSSH 5.6) would be very useful here,
 # but that option is available in Debian squeeze.
 
-# This requires the bash version of printf
+# This requires the bash version of printf (bashism)
 printf -v ARGS "%q " "$@"
 ssh garnet.ciffer.net notmuch $ARGS
