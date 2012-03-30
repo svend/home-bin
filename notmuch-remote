@@ -7,9 +7,10 @@
 # Put (setq notmuch-command "notmuch-remote) in emacs configuration.
 
 # Start a ControlMaster connection first:
-# TODO: This will start a new ssh connection each time.
-# ssh -Nf -o "ControlMaster yes" garnet.ciffer.net || true
-#
+
+ssh -O check garnet.ciffer.net 2>/dev/null ||
+ssh -MNf garnet.ciffer.net
+
 # ControlPersist option (in OpenSSH 5.6) would be very useful here,
 # but that option is available in Debian squeeze.
 
