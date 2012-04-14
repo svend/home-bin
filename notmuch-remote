@@ -1,20 +1,25 @@
 #!/bin/bash
 
-: ${SSH_REMOTE_HOST:=garnet.ciffer.net}
-
-# Run notmuch on remote host
+# Run notmuch on remote host over SSH
 #
 # http://notmuchmail.org/remoteusage/
 #
 # Put (setq notmuch-command "notmuch-remote) in emacs configuration.
+#
+# Add a host specification for "notmuch" to ~/.ssh/config:
+#
+# Host notmuch
+#     HostName host.example.org
 
+SSH_REMOTE_HOST=notmuch
+SSH_CONTROL_PATH="-o ControlPath=/tmp/notmuch-remote.${USER}.%r@%h:%p"
 # Start a master connection if one isn't running yet
-ssh -O check ${SSH_REMOTE_HOST} 2>/dev/null ||
-ssh -MNf ${SSH_REMOTE_HOST}
+ssh ${SSH_CONTROL_PATH} -O check ${SSH_REMOTE_HOST} 2>/dev/null ||
+ssh ${SSH_CONTROL_PATH} -MNf ${SSH_REMOTE_HOST}
 
-# ControlPersist option (in OpenSSH 5.6) would be very useful here,
-# but that option is available in Debian squeeze.
+# The ControlPersist option (in OpenSSH 5.6) could be used to start
+# the master connection automatically when "ssh host notmuch" is run.
 
 # This requires the bash version of printf (bashism)
 printf -v ARGS "%q " "$@"
-ssh ${SSH_REMOTE_HOST} notmuch ${ARGS}
+ssh ${SSH_CONTROL_PATH} ${SSH_REMOTE_HOST} notmuch ${ARGS}
