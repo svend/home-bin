@@ -35,9 +35,11 @@ cmd_open()
 	"-")
 		key_cmd=cat
 		;;
-	*)
+	*.gpg)
 		key_cmd="gpg -d -q \"$KEY\""
 		;;
+	*)
+		key_cmd="cat \"$KEY\""
 	esac
 
 	eval "$key_cmd" |
