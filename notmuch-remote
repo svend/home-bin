@@ -4,16 +4,20 @@
 #
 # http://notmuchmail.org/remoteusage/
 #
-# Put (setq notmuch-command "notmuch-remote) in emacs configuration.
+# Put this script in your path and add (setq notmuch-command
+# "notmuch-remote") to your emacs configuration.
 #
-# Add a host specification for "notmuch" to ~/.ssh/config:
+# Add a host specification for "notmuch" to ~/.ssh/config to set the
+# remote host and (optionally) remote user.
 #
 # Host notmuch
 #     HostName host.example.org
+#     User username
 
 SSH_REMOTE_HOST=notmuch
 SSH_CONTROL_PATH="-o ControlPath=/tmp/notmuch-remote.${USER}.%r@%h:%p"
-# Start a master connection if one isn't running yet
+
+# Start a background master connection if one isn't running yet
 ssh ${SSH_CONTROL_PATH} -O check ${SSH_REMOTE_HOST} 2>/dev/null ||
 ssh ${SSH_CONTROL_PATH} -MNf ${SSH_REMOTE_HOST}
 

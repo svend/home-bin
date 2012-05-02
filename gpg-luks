@@ -4,7 +4,7 @@ set -e
 
 is_uuid()
 {
-	expr $1 : '\w\{8\}-\w\{4\}-\w\{4\}-\w\{4\}-\w\{12\}$'
+	expr $1 : '\w\{8\}-\w\{4\}-\w\{4\}-\w\{4\}-\w\{12\}$' >/dev/null
 }
 
 cmd_close()
@@ -31,8 +31,18 @@ cmd_open()
 	fi
 	KEY=$2
 
+	case "$KEY" in
+	"-")
+		key_cmd=cat
+		;;
+	*.gpg)
+		key_cmd="gpg -d -q \"$KEY\""
+		;;
+	*)
+		key_cmd="cat \"$KEY\""
+	esac
 
-	gpg -d -q $KEY |
+	eval "$key_cmd" |
 	sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID || true
 	sudo udisks --mount /dev/mapper/luks-uuid-$UUID
 }
