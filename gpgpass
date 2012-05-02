@@ -10,11 +10,11 @@ gpg_cat()
 {
 	if [ $# -eq 0 ]; then
 		# Process stdin
-		gpg --decrypt
+		gpg --decrypt --quiet
 	else
 		# Process each argument
 		for f in "$@"; do
-			gpg --decrypt "$f"
+			gpg --decrypt --quiet "$f"
 		done
 	fi
 }
