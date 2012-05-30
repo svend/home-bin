@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+sudo apt-get update
+sudo apt-get upgrade -y
+install-virtualbox-guest
+sudo /etc/init.d/miredo stop
+sudo cp ~/tmp/aiccu.conf /etc
+sudo /etc/init.d/aiccu restart
+sudo /etc/init.d/gdm3 restart
+exit
