@@ -7,5 +7,7 @@ install-virtualbox-guest
 sudo /etc/init.d/miredo stop
 sudo cp ~/tmp/aiccu.conf /etc
 sudo /etc/init.d/aiccu restart
+sudo dpkg -i Downloads/skype-*_i386.deb || true
+sudo apt-get -f install
 sudo /etc/init.d/gdm3 restart
 exit
