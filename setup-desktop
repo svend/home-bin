@@ -1,13 +1,23 @@
 #!/bin/sh
 set -e
 
+# Update installed packages
 sudo apt-get update
-sudo apt-get upgrade -y
+sudo apt-get -y upgrade
+
+# Install virtualbox additions
 install-virtualbox-guest
+
+# Install skype
+sudo dpkg -i Downloads/skype-*_i386.deb || true
+sudo apt-get -f -y install
+
+# Stop miredo
 sudo /etc/init.d/miredo stop
+
+# Configure and start aiccu
 sudo cp ~/tmp/aiccu.conf /etc
 sudo /etc/init.d/aiccu restart
-sudo dpkg -i Downloads/skype-*_i386.deb || true
-sudo apt-get -f install
+
+# Restart gdm (to get full resolution with vbox additions)
 sudo /etc/init.d/gdm3 restart
-exit
