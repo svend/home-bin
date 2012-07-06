@@ -19,5 +19,10 @@ sudo /etc/init.d/miredo stop
 sudo cp ~/tmp/aiccu.conf /etc
 sudo /etc/init.d/aiccu restart
 
+# Set gksu to sudo mode
+# http://ciffer.net/~svend/blog/entry/Gnome_administration_with_user_password/
+sudo update-alternatives --set libgksu-gconf-defaults /usr/share/libgksu/debian/gconf-defaults.libgksu-sudo
+sudo update-gconf-defaults
+
 # Restart gdm (to get full resolution with vbox additions)
 sudo /etc/init.d/gdm3 restart
