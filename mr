@@ -1866,7 +1866,7 @@ lib =
 	}
 
 svn_test = perl: -d "$ENV{MR_REPO}/.svn"
-git_test = perl: -d "$ENV{MR_REPO}/.git"
+git_test = perl: -e "$ENV{MR_REPO}/.git"
 bzr_test = perl: -d "$ENV{MR_REPO}/.bzr"
 cvs_test = perl: -d "$ENV{MR_REPO}/CVS"
 hg_test  = perl: -d "$ENV{MR_REPO}/.hg"
@@ -1891,7 +1891,7 @@ bzr_update =
 		bzr merge --pull "$@"
 	fi
 cvs_update = cvs update "$@"
-hg_update  = hg pull "$@" && hg update "$@"
+hg_update  = hg pull "$@"; hg update "$@"
 darcs_update = darcs pull -a "$@"
 fossil_update = fossil pull "$@"
 vcsh_update = vcsh run "$MR_REPO" git pull "$@"
@@ -1983,7 +1983,7 @@ git_register =
 	echo "Registering git url: $url in $MR_CONFIG"
 	mr -c "$MR_CONFIG" config "`pwd`" checkout="git clone '$url' '$MR_REPO'"
 bzr_register =
-	url="`LC_ALL=C bzr info . | egrep -i 'checkout of branch|parent branch' | awk '{print $NF}'`"
+	url="`LC_ALL=C bzr info . | egrep -i 'checkout of branch|parent branch' | awk '{print $NF}' | head -n 1`"
 	if [ -z "$url" ]; then
 		error "cannot determine bzr url"
 	fi
