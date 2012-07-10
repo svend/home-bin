@@ -26,3 +26,7 @@ sudo update-gconf-defaults
 
 # Restart gdm (to get full resolution with vbox additions)
 sudo /etc/init.d/gdm3 restart
+
+# Use emacs-snapshot
+sudo update-alternatives --set emacsclient /usr/bin/emacsclient.emacs-snapshot
+sudo update-alternatives --set emacs /usr/bin/emacs-snapshot
