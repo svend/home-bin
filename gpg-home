@@ -5,5 +5,5 @@ set -e
 gpg --import publickey.asc
 gpg --card-status
 ./gpg-luks open `basename *.gpg .gpg` *.gpg
-udisks --unmount /dev/mapper/luks*
+sudo udisks --unmount /dev/mapper/luks*
 sudo mount /dev/mapper/luks* /home
