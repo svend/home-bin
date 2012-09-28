@@ -10,7 +10,8 @@ trap 'rm -f "$TMPFILE"' EXIT
 seen_begin=false
 seen_end=false
 
-while read line; do
+DONE=false
+while read line || DONE=true; do
 	case $line in
 	-----BEGIN*)
 		seen_begin=true;
@@ -31,4 +32,6 @@ while read line; do
 		seen_begin=false
 		seen_end=false
 	fi
+
+	$DONE && break
 done
