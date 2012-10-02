@@ -1,4 +1,5 @@
 #!/bin/sh
+# Enable IPv6 and ssh on android phone
 set -e
 
 do_start()

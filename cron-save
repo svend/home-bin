@@ -1,4 +1,4 @@
 #!/bin/sh
 set -e
 
-crontab -l > $HOME/.cron/$USER-$(hostname)
+crontab -l > $HOME/.config/cron/$USER-$(hostname)
