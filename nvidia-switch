@@ -1,0 +1,13 @@
+#!/bin/sh
+
+case $1 in
+clone)
+	nvidia-settings --assign CurrentMetaMode="DFP-0:nvidia-auto-select +0+0 {ViewPortIn=1280x768}, CRT-0:nvidia-auto-select +0+0"
+
+	# Doesn't work
+	#nvidia-settings --assign CurrentMetaMode="DFP-0:nvidia-auto-select +0+0 {ViewPortIn=1280x768}, CRT-0:1280x768 +0+0"
+	;;
+off)
+	nvidia-settings --assign CurrentMetaMode="DFP-0:nvidia-auto-select"
+	;;
+esac
