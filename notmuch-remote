@@ -18,12 +18,12 @@ SSH_REMOTE_HOST=notmuch
 SSH_CONTROL_PATH="-o ControlPath=/tmp/notmuch-remote.${USER}.%r@%h:%p"
 
 # Start a background master connection if one isn't running yet
-ssh ${SSH_CONTROL_PATH} -O check ${SSH_REMOTE_HOST} 2>/dev/null ||
-ssh ${SSH_CONTROL_PATH} -MNf ${SSH_REMOTE_HOST}
+#ssh ${SSH_CONTROL_PATH} -O check ${SSH_REMOTE_HOST} 2>/dev/null ||
+#ssh ${SSH_CONTROL_PATH} -MNf ${SSH_REMOTE_HOST}
 
 # The ControlPersist option (in OpenSSH 5.6) could be used to start
 # the master connection automatically when "ssh host notmuch" is run.
 
 # This requires the bash version of printf (bashism)
 printf -v ARGS "%q " "$@"
-ssh ${SSH_CONTROL_PATH} ${SSH_REMOTE_HOST} notmuch ${ARGS}
+ssh -o "ControlMaster=auto" -o "ControlPersist=yes" ${SSH_CONTROL_PATH} ${SSH_REMOTE_HOST} notmuch ${ARGS}
