@@ -32,7 +32,7 @@ cmd_open()
 	KEY=$2
 
 	case "$KEY" in
-	"-")
+	-)
 		key_cmd=cat
 		;;
 	*.gpg)
