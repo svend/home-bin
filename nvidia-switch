@@ -7,10 +7,13 @@ clone)
 	# Doesn't work
 	#nvidia-settings --assign CurrentMetaMode="DFP-0:nvidia-auto-select +0+0 {ViewPortIn=1280x768}, CRT-0:1280x768 +0+0"
 	;;
-external)
+vga)
 	nvidia-settings --assign CurrentMetaMode="CRT-0:nvidia-auto-select"
 	;;
 laptop)
 	nvidia-settings --assign CurrentMetaMode="DFP-0:nvidia-auto-select"
+	;;
+*)
+	echo "$0 clone|vga|laptop"
 	;;
 esac
