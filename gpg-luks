@@ -60,7 +60,7 @@ cmd_format()
 	head -c 256 /dev/random | gpg -e > $KEY
 
 	gpg -d -q $KEY | sudo cryptsetup --key-file - luksFormat $DEV
-	# luksFormat changes partition UUID
+	# luksFormat changes the partition UUID
 	UUID=$(sudo blkid -o value -s UUID $DEV)
 
 	gpg -d -q $KEY |
