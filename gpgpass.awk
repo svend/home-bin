@@ -28,6 +28,9 @@ BEGIN {
 	# Fields are separated by tabs
 	FS = ","
 
+	# Password
+	password = ""
+
 	# Number of matches
 	n = 0;
 }
@@ -50,15 +53,15 @@ $1 ~ regexp {
 	# Print maching account information to stderr
 	printf "# %s: %s (%s)\n", filename, $1, $3 > "/dev/stderr"
 
-	# Print password
-	print $2
+	password = $2
 }
 
 # Print statistics to stderr
 END {
 	if (n == 1) {
-		print "# " n " match" > "/dev/stderr"
+		print password
 	} else {
-		print "# " n " matches" > "/dev/stderr"
+                print "Error: " n " matches)" > "/dev/stderr"
+		exit 1
 	}
 }
