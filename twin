@@ -1,5 +1,0 @@
-#!/bin/sh
-# tmux wrapper: Run a command in a new window
-set -e
-
-tmux new-window "exec $*"
