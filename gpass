@@ -4,7 +4,7 @@ set -e
 if [ -n "$2" ]; then
 	f=$2
 else
-	f=$HOME/doc/accounts.txt.gpg
+	f=$HOME/doc/accounts.csv.gpg
 fi
 
 if [ "$OSTYPE" = "cygwin" ]; then

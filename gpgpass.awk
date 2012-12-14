@@ -8,8 +8,9 @@
 # $2: account password
 # $3: additional account information (optional)
 #
-# Fields are separated by one or more tabs.  Blank lines and comments (lines
-# beginning with #) are ignored.  All fields after the first three are ignored.
+# Fields are separated by commas. Blank lines and comments (lines
+# beginning with #) are ignored. All fields after the first three are
+# ignored.
 #
 # Matching records are printed, with the account description and information
 # sent to stderr, and the password sent to stdout.
@@ -17,7 +18,7 @@
 # For example:
 #
 # # This is a comment
-# user@example.com	password	# Comment
+# user@example.com,password,Comment
 
 # Variables:
 # regexp - Regular expression to search for
@@ -25,7 +26,7 @@
 
 BEGIN {
 	# Fields are separated by tabs
-	FS = "[\t\n]+"
+	FS = ","
 
 	# Number of matches
 	n = 0;
