@@ -18,7 +18,7 @@ setclip()
 		;;
 	*)
 		# Linux
-		cat | xclip -i -selection clipboard -l 1
+		cat | xclip -i -selection clipboard
 		;;
 	esac
 }
