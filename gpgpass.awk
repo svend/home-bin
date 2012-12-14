@@ -46,20 +46,21 @@ BEGIN {
 	next
 }
 
-username = $1
-title = $2
-# Only store password if account matches
-comment = $4
+{
+	username = $1
+	title = $2
+	# Only store password if account matches
+	comment = $4
 
-# Test description against regular expression
-title ~ regexp {
-	# One more match found
-	n++
+	if (title ~ regexp) {
+		# One more match found
+		n++
 
-	# Print maching account information to stderr
-	printf "title: %s, username: %s (%s)\n", title, username, comment > "/dev/stderr"
+		# Print maching account information to stderr
+		printf "title: %s, username: %s (%s)\n", title, username, comment > "/dev/stderr"
 
-	password = $3
+		password = $3
+	}
 }
 
 # Print statistics to stderr
