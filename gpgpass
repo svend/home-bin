@@ -52,7 +52,7 @@ main()
 	shift
 
 	# Find the directory that this script resides in
-	dir=`dirname "$progname"`
+	dir=$(dirname "$progname")
 
 	# Check if awk script exists
 	awkfile=$dir/gpgpass.awk
