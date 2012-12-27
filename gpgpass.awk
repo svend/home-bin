@@ -54,9 +54,9 @@ BEGIN {
 	# Only store password if account matches
 	comment = $4
 
+	# All regexps must match
 	for (i in regexp_array) {
-	    if (title ~ regexp_array[i] || username ~ regexp_array[i]) {
-	    } else {
+	    if (! (title ~ regexp_array[i] || username ~ regexp_array[i])) {
 		next
 	    }
 	}
