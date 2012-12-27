@@ -26,7 +26,7 @@
 # filename - Name of current file
 
 BEGIN {
-	# Fields are separated by tabs
+	# Fields are separated by spaces
 	FS = ","
 
 	# Password
