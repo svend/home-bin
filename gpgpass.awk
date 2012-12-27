@@ -22,10 +22,12 @@
 # user,example.com,password,comment
 
 # Variables:
-# regexp - Regular expression to search for
+# regexp - Regular expressions to search for, comma separated
 # filename - Name of current file
 
 BEGIN {
+	split(regexp, regexp_array, ",")
+
 	# Fields are separated by spaces
 	FS = ","
 
@@ -52,15 +54,20 @@ BEGIN {
 	# Only store password if account matches
 	comment = $4
 
-	if (title ~ regexp) {
-		# One more match found
-		n++
-
-		# Print maching account information to stderr
-		printf "title: %s, username: %s (%s)\n", title, username, comment > "/dev/stderr"
-
-		password = $3
+	for (i in regexp_array) {
+	    if (title ~ regexp_array[i] || username ~ regexp_array[i]) {
+	    } else {
+		next
+	    }
 	}
+
+	# One more match found
+	n++
+
+	# Print maching account information to stderr
+	printf "title: %s, username: %s (%s)\n", title, username, comment > "/dev/stderr"
+
+	password = $3
 }
 
 # Print statistics to stderr
@@ -68,7 +75,7 @@ END {
 	if (n == 1) {
 		print password
 	} else {
-                print "Error: " n " matches" > "/dev/stderr"
+		print "Error: " n " matches" > "/dev/stderr"
 		exit 1
 	}
 }
