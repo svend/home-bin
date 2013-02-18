@@ -116,8 +116,10 @@ These commands are also available:
 
 =item bootstrap url [directory]
 
-Causes mr to download the url, and use it as a .mrconfig file
-to checkout the repositories listed in it, into the specified directory.
+Causes mr to download the url, and use it as a .mrconfig file to checkout
+the repositories listed in it, into the specified directory.
+
+To use scp to download, the url may have the form ssh://[user@]host:file
 
 The directory will be created if it does not exist. If no directory is
 specified, the current directory will be used.
@@ -1661,11 +1663,18 @@ sub bootstrap {
 	eval q{use File::Temp};
 	die $@ if $@;
 	my $tmpconfig=File::Temp->new();
-	my @curlargs = ("curl", "-A", "mr", "-L", "-s", $url, "-o", $tmpconfig);
-	push(@curlargs, "-k") if $insecure;
-	my $curlstatus = system(@curlargs);
-	die "mr bootstrap: invalid SSL certificate for $url (consider -k)\n" if $curlstatus >> 8 == 60;
-	die "mr bootstrap: download of $url failed\n" if $curlstatus != 0;
+	my @downloader;
+	if ($url =~ m!^ssh://(.*)!) {
+		@downloader = ("scp", $1, $tmpconfig);
+	}
+	else {
+		@downloader = ("curl", "-A", "mr", "-L", "-s", $url, "-o", $tmpconfig);
+		push(@downloader, "-k") if $insecure;
+	}
+	my $status = system(@downloader);
+	die "mr bootstrap: invalid SSL certificate for $url (consider -k)\n"
+		if $downloader[0] eq 'curl' && $status >> 8 == 60;
+	die "mr bootstrap: download of $url failed\n" if $status != 0;
 
 	if (! -e $dir) {
 		system("mkdir", "-p", $dir);
@@ -1890,7 +1899,7 @@ bzr_update =
 	else
 		bzr merge --pull "$@"
 	fi
-cvs_update = cvs update "$@"
+cvs_update = cvs -q update "$@"
 hg_update  = hg pull "$@"; hg update "$@"
 darcs_update = darcs pull -a "$@"
 fossil_update = fossil pull "$@"
@@ -1904,7 +1913,7 @@ cvs_status = cvs status "$@"
 hg_status  = hg status "$@"
 darcs_status = darcs whatsnew -ls "$@" || true
 fossil_status = fossil changes "$@"
-vcsh_status = cd $(vcsh run "$MR_REPO" git config --get core.worktree); vcsh run "$MR_REPO" git status -s "$@" || true
+vcsh_status = vcsh run "$MR_REPO" git -c status.relativePaths=false status -s "$@" || true
 veracity_status = vv status "$@"
 
 svn_commit = svn commit "$@"
@@ -1948,7 +1957,7 @@ veracity_push = vv push "$@"
 svn_diff = svn diff "$@"
 git_diff = git diff "$@"
 bzr_diff = bzr diff "$@"
-cvs_diff = cvs diff "$@"
+cvs_diff = cvs -q diff "$@"
 hg_diff  = hg diff "$@"
 darcs_diff = darcs diff -u "$@"
 fossil_diff = fossil diff "$@"
@@ -1965,6 +1974,13 @@ git_bare_log = git log "$@"
 fossil_log = fossil timeline "$@"
 vcsh_log = vcsh run "$MR_REPO" git log "$@"
 veracity_log = vv log "$@"
+
+hg_grep = hg grep "$@"
+cvs_grep = ack-grep "$@"
+svn_grep = ack-grep "$@"
+git_svn_grep = git grep "$@"
+git_grep = git grep "$@"
+bzr_grep = ack-grep "$@"
 
 run = "$@"
 
