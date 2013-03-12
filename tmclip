@@ -4,7 +4,7 @@
 # Svend Sorensen
 
 # Number of seconds to wait before clearing the clipboard
-timeout=10
+timeout=${1:-10}
 
 # Name of script
 progname=$(basename $0)
