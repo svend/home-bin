@@ -43,7 +43,7 @@ cmd_open()
 	esac
 
 	eval "$key_cmd" |
-	sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID || true
+	    sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID || true
 	udisks --mount /dev/mapper/luks-uuid-$UUID
 }
 
@@ -64,7 +64,7 @@ cmd_format()
 	UUID=$(sudo blkid -o value -s UUID $DEV)
 
 	gpg -d -q $KEY |
-	sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID
+	    sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID
 	sudo mkfs.ext4 /dev/mapper/luks-uuid-$UUID
 }
 
