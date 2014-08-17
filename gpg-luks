@@ -16,7 +16,7 @@ cmd_close()
   fi
 
   # Try to close luks device, even if udisks fails
-  udisks --unmount /dev/mapper/luks-uuid-$UUID || true
+  udisksctl unmount --block-device /dev/mapper/luks-uuid-$UUID || true
   sudo cryptsetup luksClose luks-uuid-$UUID
 }
 
@@ -44,7 +44,7 @@ cmd_open()
 
   eval "$key_cmd" |
     sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID || true
-  udisks --mount /dev/mapper/luks-uuid-$UUID
+  udisksctl mount --block-device /dev/mapper/luks-uuid-$UUID
 }
 
 cmd_format()
