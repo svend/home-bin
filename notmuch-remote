@@ -1,29 +1,10 @@
 #!/bin/bash
 
-# Run notmuch on remote host over SSH
+# Work around issue with warning being printed on remote host. This
+# warning message is output to stderr and breaks notmuch-emacs.
 #
-# http://notmuchmail.org/remoteusage/
-#
-# Put this script in your path and add (setq notmuch-command
-# "notmuch-remote") to your emacs configuration.
-#
-# Add a host specification for "notmuch" to ~/.ssh/config to set the
-# remote host and (optionally) remote user.
-#
-# Host notmuch
-#     HostName host.example.org
-#     User username
+# bash: warning: setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
+unset  LC_ALL
 
-SSH_REMOTE_HOST=notmuch
-SSH_CONTROL_PATH="-o ControlPath=/tmp/notmuch-remote.${USER}.%r@%h:%p"
-
-# Start a background master connection if one isn't running yet
-#ssh ${SSH_CONTROL_PATH} -O check ${SSH_REMOTE_HOST} 2>/dev/null ||
-#ssh ${SSH_CONTROL_PATH} -MNf ${SSH_REMOTE_HOST}
-
-# The ControlPersist option (in OpenSSH 5.6) could be used to start
-# the master connection automatically when "ssh host notmuch" is run.
-
-# This requires the bash version of printf (bashism)
 printf -v ARGS "%q " "$@"
-ssh -o "ControlMaster=auto" -o "ControlPersist=yes" ${SSH_CONTROL_PATH} ${SSH_REMOTE_HOST} notmuch ${ARGS}
+exec ssh notmuch notmuch ${ARGS}
