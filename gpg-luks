@@ -2,6 +2,12 @@
 
 set -e
 
+if command -v gpg >/dev/null 2>&1; then
+  GPG=gpg
+elif command -v gpg2 >/dev/null 2>&1; then
+  GPG=gpg2
+fi
+
 is_uuid()
 {
   expr $1 : '\w\{8\}-\w\{4\}-\w\{4\}-\w\{4\}-\w\{12\}$' >/dev/null
@@ -36,7 +42,7 @@ cmd_open()
     key_cmd=cat
     ;;
   *.gpg)
-    key_cmd="gpg -d -q \"$KEY\""
+    key_cmd="$GPG -d -q \"$KEY\""
     ;;
   *)
     key_cmd="cat \"$KEY\""
@@ -57,13 +63,13 @@ cmd_format()
   fi
   KEY=$2
 
-  head -c 256 /dev/random | gpg -e > $KEY
+  head -c 256 /dev/random | $GPG -e > $KEY
 
-  gpg -d -q $KEY | sudo cryptsetup --key-file - luksFormat $DEV
+  $GPG -d -q $KEY | sudo cryptsetup --key-file - luksFormat $DEV
   # luksFormat changes the partition UUID
   UUID=$(sudo blkid -o value -s UUID $DEV)
 
-  gpg -d -q $KEY |
+  $GPG -d -q $KEY |
     sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID
   sudo mkfs.ext4 /dev/mapper/luks-uuid-$UUID
 }
