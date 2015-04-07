@@ -4,10 +4,24 @@ set -e
 FQDN=$1
 HOST=$(echo $FQDN | cut -d. -f1)
 
+# --remove-source-files \
+
 rsync \
-	--recursive \
-	--update \
-	--verbose \
-	--exclude thumbnails \
-	$FQDN:/sdcard/DCIM/Camera/ \
-	$HOME/media/pictures/$HOST
+  --recursive \
+  --update \
+  --verbose \
+  --exclude .aux \
+  --exclude thumbnails \
+  $FQDN:/sdcard/DCIM/Camera/ \
+  $HOME/media/photos/$HOST
+# --exclude '/*/*/' -f"+ */" -f"- *" \
+
+rsync \
+  --recursive \
+  --update \
+  --verbose \
+  --exclude .aux \
+  --exclude thumbnails \
+  $FQDN:/storage/sdcard1/DCIM/Camera/ \
+  $HOME/media/photos/$HOST
+# --exclude '/*/*/' -f"+ */" -f"- *" \
