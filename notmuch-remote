@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Work around issue with warning being printed on remote host. This
 # warning message is output to stderr and breaks notmuch-emacs.
