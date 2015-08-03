@@ -4,7 +4,7 @@
 
 set -e
 
-TMPFILE=$(mktemp)
+TMPFILE=$(mktemp multi-x509.XXXXXXXXXX)
 trap 'rm -f "$TMPFILE"' EXIT
 
 seen_begin=false
