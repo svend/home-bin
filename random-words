@@ -17,7 +17,7 @@ esac
 
 num=${1:-5}
 
-grep '^[a-z]\{3,5\}$' "$DICT" |
+grep '^[a-z]\{3,6\}$' "$DICT" |
   "$SORT" -R |
   head -n "$num" |
   while read s; do
