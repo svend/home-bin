@@ -2,12 +2,25 @@
 # Print a string of five random words from the system dictionary
 set -e
 
+case $(uname) in
+Darwin)
+  : ${DICT:=/usr/share/dict/web2}
+  : ${SORT:=gsort}
+  : ${ECHO:=gecho}
+  ;;
+*)
+  : ${DICT:-/usr/share/dict/american-english}
+  : ${SORT:-sort}
+  : ${ECHO:-echo}
+  ;;
+esac
+
 num=${1:-5}
 
-grep '^[a-z]\{3,5\}$' /usr/share/dict/american-english |
-sort -R |
-head -n "$num" |
-while read s; do
-	echo -n "$s "
-done
+grep '^[a-z]\{3,5\}$' "$DICT" |
+  "$SORT" -R |
+  head -n "$num" |
+  while read s; do
+    "$ECHO" -n "$s "
+  done
 echo
