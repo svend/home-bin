@@ -1,0 +1,21 @@
+#!/bin/sh
+
+system="$(sw_vers -productName) $(sw_vers -productVersion)"
+nix_version="$(nix-env --version)"
+nixpkgs_version="$(nix-instantiate --eval '<nixpkgs>' -A lib.nixpkgsVersion)"
+
+cat <<EOF
+## Issue description
+
+
+
+### Steps to reproduce
+
+
+
+## Technical details
+
+* System: $system
+* Nix version: $nix_version
+* Nixpkgs version: $nixpkgs_version
+EOF
