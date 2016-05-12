@@ -1,6 +1,0 @@
-#!/bin/sh
-
-set -e
-
-git init
-git remote add origin http://git.ciffer.net/svend/puppet-modules.git
