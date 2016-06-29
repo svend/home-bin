@@ -1,0 +1,10 @@
+#!/bin/sh
+# Update shebang for current nix installed python
+
+set -e
+
+PYTHON_BIN_PATH=$(python -E -m site --user-base)/bin
+PYTHON_BIN=$(readlink -f "$(which python2.7)")
+
+sed -i "s|#!/nix/store/[a-z0-9]*-python-2.7.11/bin/python2.7|#!$PYTHON_BIN|" \
+    "$PYTHON_BIN_PATH"/*
