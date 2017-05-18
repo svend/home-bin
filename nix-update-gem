@@ -1,0 +1,15 @@
+#!/bin/sh
+# Update shebang for current nix installed ruby
+
+set -e
+
+RUBY_BIN_PATH=$(ruby -rubygems -e 'puts Gem.user_dir')/bin
+RUBY_BIN=$(readlink -f "$(which ruby)")
+
+sed -i "s|#!/nix/store/.*/bin/ruby|#!$RUBY_BIN|" \
+    "$RUBY_BIN_PATH"/*
+
+gem list --local ffi-yajl \
+  | grep ffi-yajl \
+  | sed 's/\(.*\) (\(.*\)).*/\1 \2/' \
+  | while read gem ver; do gem install --version "$ver" "$gem"; done
