@@ -13,10 +13,10 @@ DEF_PORT=443
 progname=$0
 
 if [ $# -eq 0 ]; then
-	echo "Usage: $progname host [port]"
-	echo
-	echo "Get SSL certificate from host.  Default port is $DEF_PORT."
-	exit 1
+  echo "Usage: $progname host [port]"
+  echo
+  echo "Get SSL certificate from host.  Default port is $DEF_PORT."
+  exit 1
 fi
 
 host=$1
