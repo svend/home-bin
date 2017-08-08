@@ -1,0 +1,6 @@
+#!/bin/sh
+
+nix-env -q \
+  | grep 'Env\|^nix' \
+  | sed 's/-[^-]*$//' \
+  | xargs nix-env -f ~/src/nixpkgs -i
