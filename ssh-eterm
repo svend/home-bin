@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# Copy eterm and eterm-color terminfo files to remote host
-#
-# Requires the ncurses-term package
-
-set -e
-ssh $1 "test -d .terminfo/e || mkdir -p .terminfo/e"
-scp /usr/share/terminfo/e/eterm* $1:.terminfo/e/

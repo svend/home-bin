@@ -1,6 +1,0 @@
-#!/bin/sh
-
-set -e
-
-pkill -9 -f "Java iKVM Viewer"
-open "$(ls -t ~/Downloads/launch*.jnlp | head -1)"
