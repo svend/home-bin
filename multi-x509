@@ -24,5 +24,7 @@ def certs(iterator):
 
 if __name__ == '__main__':
     command = sys.argv[1:]
+    if not command:
+        command = ["cat"]
     for cert in certs(sys.stdin):
         subprocess.run(command, input=str.encode(cert))
