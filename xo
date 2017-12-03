@@ -1,7 +1,0 @@
-#!/bin/sh
-
-set -e
-
-for file in "$@"; do
-	xdg-open "$file"
-done

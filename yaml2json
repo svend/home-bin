@@ -4,7 +4,7 @@ import json
 import sys
 import yaml
 
-data = yaml.load(sys.stdin)
-json = json.dumps(data)
-
-print(json)
+if __name__ == '__main__':
+    data = yaml.load(sys.stdin)
+    json = json.dumps(data)
+    print(json)
