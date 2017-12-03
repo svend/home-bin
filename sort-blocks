@@ -1,7 +1,0 @@
-#!/bin/sh
-# Sort blocks (paragraphs)
-
-# msort inserts a empty line at the end of the file, use sed to delete this
-# line
-msort --suppress-log --quiet --block --position 1 "$@" |
-sed '$d'
