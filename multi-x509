@@ -1,37 +1,21 @@
-#!/bin/sh
+#!/usr/bin/env python3
 
-# Run 'openssl x509' for each certificate read through stdin
+import subprocess
+import sys
 
-set -e
+END = '-----END'
 
-TMPFILE=$(mktemp multi-x509.XXXXXXXXXX)
-trap 'rm -f "$TMPFILE"' EXIT
 
-seen_begin=false
-seen_end=false
+def certs(iterator):
+    it = iter(iterator)
+    cert_lines = []
+    for line in it:
+        cert_lines.append(line)
+        if line.startswith(END):
+            yield ''.join(cert_lines)
 
-DONE=false
-while read line || DONE=true; do
-	case $line in
-	-----BEGIN*)
-		seen_begin=true;
-		;;
-	-----END*)
-		$seen_begin && seen_end=true;
-		;;
-	esac
 
-	if $seen_begin; then
-		echo "$line" >> "$TMPFILE"
-	fi
-
-	if $seen_end; then
-		openssl x509 "$@" < "$TMPFILE"
-		> "$TMPFILE"
-
-		seen_begin=false
-		seen_end=false
-	fi
-
-	$DONE && break
-done
+if __name__ == '__main__':
+    command = sys.argv[1:]
+    for cert in certs(sys.stdin):
+        subprocess.run(command, input=str.encode(cert))
