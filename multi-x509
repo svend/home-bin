@@ -3,16 +3,23 @@
 import subprocess
 import sys
 
-END = '-----END'
-
 
 def certs(iterator):
+    """Yields certificates from iterator."""
+    BEGIN = '-----BEGIN'
+    END = '-----END'
+
     it = iter(iterator)
     cert_lines = []
+    in_cert = False
     for line in it:
-        cert_lines.append(line)
-        if line.startswith(END):
-            yield ''.join(cert_lines)
+        if line.startswith(BEGIN):
+            in_cert = True
+        if in_cert:
+            cert_lines.append(line)
+            if line.startswith(END):
+                in_cert = False
+                yield ''.join(cert_lines)
 
 
 if __name__ == '__main__':
