@@ -4,6 +4,8 @@ import argparse
 import subprocess
 import sys
 
+COMMAND = ['cat']
+
 
 def certs(iterator):
     """Yields certificates from iterator."""
@@ -12,20 +14,25 @@ def certs(iterator):
 
     it = iter(iterator)
     cert_lines = []
-    in_cert = False
     for line in it:
-        if line.startswith(BEGIN):
-            in_cert = True
-        if in_cert:
+        if line.startswith(BEGIN) or cert_lines:
             cert_lines.append(line)
             if line.startswith(END):
-                in_cert = False
                 yield ''.join(cert_lines)
+                cert_lines = []
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('command', default='cat', nargs='*')
-    args = parser.parse_args()
+    parser = argparse.ArgumentParser(
+        usage='%(prog)s [options] [command]',
+        description='''Read certificates from stdin and run command on each
+        one. Default command is `{}`. '''.format(' '.join(COMMAND)))
+    parser.add_argument(
+        '--after', help='string to print after each result')
+    (args, command) = parser.parse_known_args()
+
+    command = (command or COMMAND)
     for cert in certs(sys.stdin):
-        subprocess.run(args.command, input=str.encode(cert))
+        subprocess.run(command, input=str.encode(cert))
+        if args.after is not None:
+            print(args.after)
