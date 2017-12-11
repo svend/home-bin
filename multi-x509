@@ -22,14 +22,18 @@ def certs(iterator):
                 cert_lines = []
 
 
-if __name__ == '__main__':
+def parse_args():
     parser = argparse.ArgumentParser(
         usage='%(prog)s [options] [command]',
         description='''Read certificates from stdin and run command on each
         one. Default command is `{}`. '''.format(' '.join(COMMAND)))
     parser.add_argument(
         '--after', help='string to print after each result')
-    (args, command) = parser.parse_known_args()
+    return parser.parse_known_args()
+
+
+if __name__ == '__main__':
+    (args, command) = parse_args()
 
     command = (command or COMMAND)
     for cert in certs(sys.stdin):
