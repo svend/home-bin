@@ -8,7 +8,7 @@ COMMAND = ['cat']
 
 
 def certs(iterator):
-    """Yields certificates from iterator."""
+    '''Yields certificates from iterator.'''
     BEGIN = '-----BEGIN'
     END = '-----END'
 
