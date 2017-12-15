@@ -22,5 +22,5 @@ fi
 host=$1
 port=${2:-$DEF_PORT}
 
-openssl s_client -showcerts -connect $host:$port 2>&1 </dev/null \
-	| sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p'
+openssl s_client -showcerts -servername $host -connect $host:$port 2>&1 </dev/null \
+  | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p'
