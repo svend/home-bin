@@ -1,0 +1,15 @@
+#!/bin/sh
+
+TZS="UTC Europe/Budapest America/Los_Angeles"
+
+DATE="$1"
+shift
+
+date -d "$DATE" "$@"
+
+for TZ in $TZS; do
+  (
+    echo "$TZ: "
+    TZ=$TZ date -d "$DATE" "$@"
+  ) | xargs
+done
