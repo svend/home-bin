@@ -10,36 +10,36 @@ fi
 
 is_uuid()
 {
-  expr $1 : '\w\{8\}-\w\{4\}-\w\{4\}-\w\{4\}-\w\{12\}$' >/dev/null
+  expr "$1" : '\w\{8\}-\w\{4\}-\w\{4\}-\w\{4\}-\w\{12\}$' >/dev/null
 }
 
 cmd_close()
 {
-  if is_uuid $1; then
+  if is_uuid "$1"; then
     UUID=$1
   else
-    UUID=$(sudo blkid -o value -s UUID $1)
+    UUID=$(sudo blkid -o value -s UUID "$1")
   fi
 
   # Try to close luks device, even if udisks fails
-  udisksctl unmount --block-device /dev/mapper/luks-uuid-$UUID || true
-  sudo cryptsetup luksClose luks-uuid-$UUID
+  udisksctl unmount --block-device "/dev/mapper/luks-uuid-$UUID" || true
+  sudo cryptsetup luksClose "luks-uuid-$UUID"
 }
 
 cmd_open()
 {
-  if is_uuid $1; then
+  if is_uuid "$1"; then
     UUID=$1
-    DEV=$(sudo blkid -U $UUID)
+    DEV=$(sudo blkid -U "$UUID")
   else
     DEV=$1
-    UUID=$(sudo blkid -o value -s UUID $DEV)
+    UUID=$(sudo blkid -o value -s UUID "$DEV")
   fi
   KEY=$2
 
   case "$KEY" in
   -)
-    key_cmd=cat
+    key_cmd="cat"
     ;;
   *.gpg)
     key_cmd="$GPG -d -q \"$KEY\""
@@ -49,29 +49,29 @@ cmd_open()
   esac
 
   eval "$key_cmd" |
-    sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID || true
-  udisksctl mount --block-device /dev/mapper/luks-uuid-$UUID
+    sudo cryptsetup --key-file - luksOpen "$DEV" "luks-uuid-$UUID" || true
+  udisksctl mount --block-device "/dev/mapper/luks-uuid-$UUID"
 }
 
 cmd_format()
 {
-  if is_uuid $1; then
+  if is_uuid "$1"; then
     UUID=$1
-    DEV=$(sudo blkid -U $UUID)
+    DEV=$(sudo blkid -U "$UUID")
   else
     DEV=$1
   fi
   KEY=$2
 
-  head -c 256 /dev/random | $GPG -e > $KEY
+  head -c 256 /dev/random | $GPG -e > "$KEY"
 
-  $GPG -d -q $KEY | sudo cryptsetup --key-file - luksFormat $DEV
+  $GPG -d -q "$KEY" | sudo cryptsetup --key-file - luksFormat "$DEV"
   # luksFormat changes the partition UUID
-  UUID=$(sudo blkid -o value -s UUID $DEV)
+  UUID=$(sudo blkid -o value -s UUID "$DEV")
 
-  $GPG -d -q $KEY |
-    sudo cryptsetup --key-file - luksOpen $DEV luks-uuid-$UUID
-  sudo mkfs.ext4 /dev/mapper/luks-uuid-$UUID
+  $GPG -d -q "$KEY" |
+    sudo cryptsetup --key-file - luksOpen "$DEV" "luks-uuid-$UUID"
+  sudo mkfs.ext4 "/dev/mapper/luks-uuid-$UUID"
 }
 
 case "$1" in
