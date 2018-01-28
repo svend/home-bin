@@ -1,26 +1,18 @@
-#!/bin/sh
-# getcert - Retreive SSL certificate from host
-#
-# Svend Sorensen
-set -e
+#!/usr/bin/env python3
 
-# Script settings
+import argparse
+import subprocess
 
-DEF_PORT=443
 
-# Begin script
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Get certificates')
+    parser.add_argument('host', type=str)
+    parser.add_argument('--port', default=443, type=int)
+    args = parser.parse_args()
 
-progname=$0
-
-if [ $# -eq 0 ]; then
-  echo "Usage: $progname host [port]"
-  echo
-  echo "Get SSL certificate from host.  Default port is $DEF_PORT."
-  exit 1
-fi
-
-host=$1
-port=${2:-$DEF_PORT}
-
-openssl s_client -showcerts -servername $host -connect $host:$port 2>&1 </dev/null \
-  | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p'
+    ret = subprocess.check_output(
+       ['openssl', 's_client', '-showcerts', '-servername', args.host,
+        '-connect', '{}:{}'.format(args.host, args.port)],
+       stdin=subprocess.DEVNULL,
+       universal_newlines=True)
+    print(ret)

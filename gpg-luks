@@ -48,6 +48,8 @@ cmd_open()
     key_cmd="cat \"$KEY\""
   esac
 
+  # "udiskctl unlock --key-file" added in udisks 2.6.4; this may allow non-sudo unlocking
+  # https://github.com/storaged-project/udisks/blob/4dcc25208e7b17eb8db8cddda58f94e00affb5c4/NEWS#L543
   eval "$key_cmd" |
     sudo cryptsetup --key-file - luksOpen "$DEV" "luks-uuid-$UUID" || true
   udisksctl mount --block-device "/dev/mapper/luks-uuid-$UUID"
