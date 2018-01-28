@@ -135,5 +135,5 @@ b8ravHNjkOR/ez4iyz0H7V84dJzjA1BOoa+Y7mHyhD8S
 
 
 def test_certs():
-    cs = list(multi_x509.certs(TEST_CERTS.splitlines()))
+    cs = list(certs(TEST_CERTS.splitlines()))
     assert len(cs) == 3
