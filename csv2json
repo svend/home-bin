@@ -4,5 +4,6 @@ import csv
 import json
 import sys
 
-r = csv.DictReader(sys.stdin)
-print(json.dumps(list(r), indent=2))
+if __name__ == '__main__':
+    r = csv.DictReader(sys.stdin)
+    print(json.dumps(list(r), indent=2))

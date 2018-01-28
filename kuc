@@ -14,4 +14,3 @@ case $1 in
   kubectl config use-context "$1"
   ;;
 esac
-
