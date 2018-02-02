@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TZS="UTC Europe/Budapest America/Los_Angeles"
+TZS="UTC Europe/Budapest America/Los_Angeles America/New_York"
 
 DATE="$1"
 shift
