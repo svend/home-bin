@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+RESTIC_REPOSITORY="$(readlink -f "$0")"
+export RESTIC_REPOSITORY
+BASEDIR=$(dirname "$RESTIC_REPOSITORY")
+
+case $(uname) in
+Darwin)
+  EXTRA_TARGETS="/nix /usr/local"
+  EJECT="diskutil eject $BASEDIR"
+  ;;
+*)
+  EJECT=true
+  ;;
+esac
+
+restic-gpg \
+  backup \
+  --one-file-system \
+  --exclude "$HOME"/.rnd \
+  "$HOME" $EXTRA_TARGETS
+
+exec $EJECT
