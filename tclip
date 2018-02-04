@@ -1,7 +1,0 @@
-#!/bin/sh
-# tmux clipboard: Read from stdin, removing final newline
-set -e
-
-# Remove final newline
-awk 'NR > 1 { print h } { h = $0 } END { ORS = ""; print h }' |
-tmux load-buffer -

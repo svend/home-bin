@@ -22,6 +22,15 @@ def certs(iterator):
                 cert_lines = []
 
 
+def run(command=None, after=None):
+    command = (command or COMMAND)
+
+    for cert in certs(sys.stdin):
+        subprocess.run(command, input=str.encode(cert))
+        if after is not None:
+            print(after)
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         usage='%(prog)s [options] [command]',
@@ -34,9 +43,4 @@ def parse_args():
 
 if __name__ == '__main__':
     (args, command) = parse_args()
-
-    command = (command or COMMAND)
-    for cert in certs(sys.stdin):
-        subprocess.run(command, input=str.encode(cert))
-        if args.after is not None:
-            print(args.after)
+    run(command=command, after=args.after)
