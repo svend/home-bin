@@ -1,26 +1,11 @@
 #!/bin/sh
-# Print a string of five random words from the system dictionary
+# Print a string of random words from a dictionary
 set -e
-
-case $(uname) in
-Darwin)
-  : ${DICT:=/usr/share/dict/web2}
-  : ${SORT:=gsort}
-  : ${ECHO:=gecho}
-  ;;
-*)
-  : ${DICT:-/usr/share/dict/american-english}
-  : ${SORT:-sort}
-  : ${ECHO:-echo}
-  ;;
-esac
 
 num=${1:-5}
 
-grep '^[a-z]\{3,6\}$' "$DICT" |
-  "$SORT" -R |
-  head -n "$num" |
-  while read s; do
-    "$ECHO" -n "$s "
-  done
+aspell dump master en_US |
+  grep '^[a-z]\{3,6\}$' |
+  sort -R |
+  head -n "$num"
 echo
