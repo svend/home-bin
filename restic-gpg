@@ -2,7 +2,9 @@
 
 set -e
 
-RESTIC_PASSWORD=$(gpg -d "$RESTIC_REPOSITORY".gpg)
-export RESTIC_PASSWORD
+RESTIC_PASSWORD=$(gpg -d "$RESTIC_REPOSITORY".gpg || true)
+if [ -n "$RESTIC_PASSWORD" ]; then
+  export RESTIC_PASSWORD
+fi
 
 exec restic "$@"
