@@ -8,11 +8,11 @@ const BEGIN: &'static str = "-----BEGIN";
 const END: &'static str = "-----END";
 const COMMAND: &'static str = "cat";
 
-fn run_command(command_and_args: &Vec<String>, stdin: &str) -> Result<(), Box<Error>> {
-    let command = command_and_args.iter().nth(0);
-    let args: Vec<_> = command_and_args.iter().skip(1).collect();
+fn run_command(cmd_and_args: &Vec<String>, stdin: &str) -> Result<(), Box<Error>> {
+    let cmd = cmd_and_args.iter().nth(0);
+    let args: Vec<_> = cmd_and_args.iter().skip(1).collect();
 
-    let mut child = Command::new(command.unwrap_or(&COMMAND.to_string()))
+    let mut child = Command::new(cmd.unwrap_or(&COMMAND.to_string()))
         .args(&args)
         .stdin(Stdio::piped())
         .spawn()?;
@@ -24,7 +24,7 @@ fn run_command(command_and_args: &Vec<String>, stdin: &str) -> Result<(), Box<Er
 
 fn run() -> Result<(), Box<Error>> {
     // Drop name of program
-    let command: Vec<String> = env::args().skip(1).collect();
+    let command: Vec<_> = env::args().skip(1).collect();
 
     let stdin = io::stdin();
     let mut cert = Vec::new();
