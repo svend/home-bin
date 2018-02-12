@@ -32,7 +32,7 @@ fn run() -> Result<(), Box<Error>> {
     for line in stdin.lock().lines() {
         let l = line?;
         if l.starts_with(BEGIN) || !cert.is_empty() {
-            cert.push(l.to_owned());
+            cert.push(l.clone());
             if l.starts_with(END) {
                 run_command(&command, &format!("{}\n", cert.join("\n")))?;
                 cert.clear();
