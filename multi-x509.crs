@@ -1,29 +1,29 @@
 #!/usr/bin/env run-cargo-script
 use std::env;
 use std::io::prelude::*;
-use std::io;
-use std::process::{Command, Stdio};
+use std::io::{self, Error};
+use std::process::{self, Command, Stdio};
 
 const BEGIN: &'static str = "-----BEGIN";
 const END: &'static str = "-----END";
 const COMMAND: &'static str = "cat";
 
-fn run_command(command_and_args: &Vec<String>, stdin: &str) {
+fn run_command(command_and_args: &Vec<String>, stdin: &str) -> Result<(), Box<Error>> {
     let mut iter = command_and_args.iter();
     let command = iter.next();
-    let args: Vec<&String> = iter.collect();
+    let args: Vec<_> = iter.collect();
 
     let mut child = Command::new(command.unwrap_or(&COMMAND.to_string()))
         .args(args)
         .stdin(Stdio::piped())
-        .spawn()
-        .expect("failed to execute process");
+        .spawn()?;
 
-    let _ = child.stdin.as_mut().unwrap().write_all(stdin.as_bytes());
-    let _ = child.wait().unwrap();
+    child.stdin.as_mut().unwrap().write_all(stdin.as_bytes())?;
+    child.wait()?;
+    Ok(())
 }
 
-fn main() {
+fn run() -> Result<(), Box<Error>> {
     // Drop name of program
     let command: Vec<String> = env::args().skip(1).collect();
 
@@ -31,13 +31,21 @@ fn main() {
     let mut cert = Vec::new();
 
     for line in stdin.lock().lines() {
-        let l = line.as_ref().unwrap();
+        let l = line?;
         if l.starts_with(BEGIN) || !cert.is_empty() {
             cert.push(l.to_owned());
             if l.starts_with(END) {
-                run_command(&command, &format!("{}\n", cert.join("\n")));
+                run_command(&command, &format!("{}\n", cert.join("\n")))?;
                 cert.clear();
             }
         }
+    }
+    Ok(())
+}
+
+fn main() {
+    if let Err(err) = run() {
+        println!("error: {}", err);
+        process::exit(1);
     }
 }
