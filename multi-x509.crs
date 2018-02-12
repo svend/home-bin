@@ -9,12 +9,11 @@ const END: &'static str = "-----END";
 const COMMAND: &'static str = "cat";
 
 fn run_command(command_and_args: &Vec<String>, stdin: &str) -> Result<(), Box<Error>> {
-    let mut iter = command_and_args.iter();
-    let command = iter.next();
-    let args: Vec<_> = iter.collect();
+    let command = command_and_args.iter().nth(0);
+    let args: Vec<_> = command_and_args.iter().skip(1).collect();
 
     let mut child = Command::new(command.unwrap_or(&COMMAND.to_string()))
-        .args(args)
+        .args(&args)
         .stdin(Stdio::piped())
         .spawn()?;
 
