@@ -21,16 +21,14 @@ fn run_command(command_and_args: &Vec<String>, stdin: &str) {
 
     let _ = child.stdin.as_mut().unwrap().write_all(stdin.as_bytes());
     let _ = child.wait().unwrap();
-
 }
 
 fn main() {
+    // Drop name of program
+    let command: Vec<String> = env::args().skip(1).collect();
+
     let stdin = io::stdin();
     let mut cert = Vec::new();
-
-    let mut command: Vec<String> = env::args().collect();
-    // Drop file name
-    command.drain(0..1);
 
     for line in stdin.lock().lines() {
         let l = line.as_ref().unwrap();
