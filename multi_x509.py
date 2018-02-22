@@ -8,7 +8,7 @@ COMMAND = ['cat']
 
 
 def certs(iterator):
-    '''Yields certificates from iterator.'''
+    '''Yield certificates from iterator.'''
     BEGIN = '-----BEGIN'
     END = '-----END'
 
@@ -22,13 +22,13 @@ def certs(iterator):
                 cert_lines = []
 
 
-def run(command=None, after=None):
-    command = (command or COMMAND)
-
+def run(command, after=None):
+    '''Run command.'''
     for cert in certs(sys.stdin):
         subprocess.run(command, input=str.encode(cert))
         if after is not None:
             print(after)
+    return 0
 
 
 def parse_args():
@@ -41,6 +41,12 @@ def parse_args():
     return parser.parse_known_args()
 
 
+def args_to_dict(args):
+    '''Return a dictionary containing args that were set.'''
+    return {k: v for (k, v) in vars(args).items() if v is not None}
+
+
 if __name__ == '__main__':
     (args, command) = parse_args()
-    run(command=command, **vars(args))
+    sys.exit(run(command=command or COMMAND,
+                 **args_to_dict(args)))
