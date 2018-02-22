@@ -43,4 +43,4 @@ def parse_args():
 
 if __name__ == '__main__':
     (args, command) = parse_args()
-    run(command=command, after=args.after)
+    run(command=command, **vars(args))
