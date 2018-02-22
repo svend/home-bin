@@ -34,18 +34,14 @@ def parse_args():
     parser = argparse.ArgumentParser(
         usage='%(prog)s [options] [command]',
         description='''Read certificates from stdin and run command on each
-        one. Default command is `{}`. '''.format(' '.join(COMMAND)))
+        one. Default command is `{}`. '''.format(' '.join(COMMAND)),
+        argument_default=argparse.SUPPRESS
+    )
     parser.add_argument(
         '--after', help='string to print after each result')
     return parser.parse_known_args()
 
 
-def args_to_dict(args):
-    '''Return a dictionary containing args that were set.'''
-    return {k: v for (k, v) in vars(args).items() if v is not None}
-
-
 if __name__ == '__main__':
     (args, command) = parse_args()
-    sys.exit(run(command=command or COMMAND,
-                 **args_to_dict(args)))
+    sys.exit(run(command=command or COMMAND, **vars(args)))
