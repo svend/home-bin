@@ -1,6 +1,6 @@
 #!/bin/sh
 
 nix-env --query \
-  | grep 'Env\|^nix' \
+  | grep 'Env' \
   | sed -e 's/^/nixpkgs./' -e 's/-[^-]*$//' \
   | xargs nix-env --install --attr
