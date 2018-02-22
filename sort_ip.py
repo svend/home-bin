@@ -3,6 +3,7 @@
 import argparse
 import fileinput
 import ipaddress
+import sys
 
 
 def sort_ips(ips):
@@ -11,8 +12,8 @@ def sort_ips(ips):
     return sorted(ips, key=sortfn)
 
 
-def run(args):
-    lines = sort_ips(fileinput.input(files=args.files))
+def run(*, files=None):
+    lines = sort_ips(fileinput.input(files=files))
     print(''.join(lines), end='')
 
 
@@ -25,5 +26,11 @@ def parse_args():
     return parser.parse_args()
 
 
+def args_to_dict(args):
+    '''Return a dictionary containing args that were set.'''
+    return {k: v for (k, v) in vars(args).items() if v}
+
+
 if __name__ == '__main__':
-    run(parse_args())
+    args = parse_args()
+    sys.exit(run(**args_to_dict(args)))

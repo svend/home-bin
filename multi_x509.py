@@ -28,7 +28,6 @@ def run(command, after=None):
         subprocess.run(command, input=str.encode(cert))
         if after is not None:
             print(after)
-    return 0
 
 
 def parse_args():
