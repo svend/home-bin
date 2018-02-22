@@ -23,9 +23,9 @@ def parse_args():
         argument_default=argparse.SUPPRESS)
     parser.add_argument(
         'files',
+        help='files to read, if empty, stdin is used',
         metavar='FILE',
-        nargs='*',
-        help='files to read, if empty, stdin is used')
+        nargs='*')
     return parser.parse_args()
 
 
