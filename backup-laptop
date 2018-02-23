@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
 import argparse
+from datetime import datetime
 import os
 import subprocess
 import sys
 
 TARGETS = ['~']
 PLATFORM_TARGETS = {'darwin': ['/nix', '/usr/local']}
+DATE_FILE = os.path.expanduser('~/.backup-laptop-dates')
 
 
 def run_command(command, dry_run=False):
@@ -24,13 +26,21 @@ def targets():
     return [os.path.expanduser(p) for p in TARGETS + extra_targets]
 
 
-def run(*, repo, eject=True, dry_run=False):
-    repo = os.path.normpath(repo)
+def backup(repo, dry_run):
     os.environ['RESTIC_REPOSITORY'] = repo
     run_command(['restic-gpg', 'backup',
                  '--one-file-system',
                  '--exclude', os.path.expanduser('~/.rnd')] +
                 targets(), dry_run=dry_run)
+    if not dry_run:
+        with open(DATE_FILE, 'a') as f:
+            timestamp = datetime.utcnow().isoformat()
+            f.write(f'{timestamp} {repo}\n')
+
+
+def run(*, repo, eject=True, dry_run=False):
+    repo = os.path.normpath(repo)
+    backup(repo, dry_run=dry_run)
     if eject:
         eject(os.path.dirname(repo), dry_run=dry_run)
 
