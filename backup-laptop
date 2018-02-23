@@ -16,7 +16,7 @@ def run_command(command, dry_run=False):
     subprocess.run(command, check=True)
 
 
-def eject(path, dry_run=False):
+def eject_drive(path, dry_run=False):
     if sys.platform == 'darwin':
         run_command(['diskutil', 'eject', path], dry_run=dry_run)
 
