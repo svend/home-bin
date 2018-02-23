@@ -1,25 +1,53 @@
-#!/bin/sh
+#!/usr/bin/env python3
 
-set -e
+import argparse
+import os
+import subprocess
+import sys
 
-RESTIC_REPOSITORY="$(readlink -f "$1")"
-export RESTIC_REPOSITORY
-BASEDIR=$(dirname "$RESTIC_REPOSITORY")
+TARGETS = ['~']
+PLATFORM_TARGETS = {'darwin': ['/nix', '/usr/local']}
 
-case $(uname) in
-Darwin)
-  EXTRA_TARGETS="/nix /usr/local"
-  EJECT="diskutil eject $BASEDIR"
-  ;;
-*)
-  EJECT=true
-  ;;
-esac
 
-restic-gpg \
-  backup \
-  --one-file-system \
-  --exclude "$HOME"/.rnd \
-  "$HOME" $EXTRA_TARGETS
+def run_command(command, dry_run=False):
+    command = ['echo'] + command if dry_run else command
+    subprocess.run(command, check=True)
 
-exec $EJECT
+
+def eject(path, dry_run=False):
+    if sys.platform == 'darwin':
+        run_command(['diskutil', 'eject', path], dry_run=dry_run)
+
+
+def targets():
+    extra_targets = PLATFORM_TARGETS.get(sys.platform, [])
+    return [os.path.expanduser(p) for p in TARGETS + extra_targets]
+
+
+def run(*, repo, dry_run=False):
+    repo = os.path.normpath(repo)
+    os.environ['RESTIC_REPOSITORY'] = repo
+    run_command(['restic-gpg', 'backup',
+                 '--one-file-system',
+                 '--exclude', os.path.expanduser('~/.rnd')] +
+                targets(), dry_run=dry_run)
+    eject(os.path.dirname(repo), dry_run=dry_run)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Backup laptop',
+        argument_default=argparse.SUPPRESS)
+    parser.add_argument(
+        'repo',
+        help='path to restic repository')
+    parser.add_argument(
+        '--dry-run',
+        help='dry run mode',
+        action='store_true')
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    args = parse_args()
+    sys.exit(run(**vars(args)))
