@@ -35,8 +35,7 @@ def parse_args():
         usage='%(prog)s [options] [command]',
         description='''Read certificates from stdin and run command on each
         one. Default command is `{}`. '''.format(' '.join(COMMAND)),
-        argument_default=argparse.SUPPRESS
-    )
+        argument_default=argparse.SUPPRESS)
     parser.add_argument(
         '--after', help='string to print after each result')
     return parser.parse_known_args()
