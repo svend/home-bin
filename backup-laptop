@@ -24,14 +24,15 @@ def targets():
     return [os.path.expanduser(p) for p in TARGETS + extra_targets]
 
 
-def run(*, repo, dry_run=False):
+def run(*, repo, eject=True, dry_run=False):
     repo = os.path.normpath(repo)
     os.environ['RESTIC_REPOSITORY'] = repo
     run_command(['restic-gpg', 'backup',
                  '--one-file-system',
                  '--exclude', os.path.expanduser('~/.rnd')] +
                 targets(), dry_run=dry_run)
-    eject(os.path.dirname(repo), dry_run=dry_run)
+    if eject:
+        eject(os.path.dirname(repo), dry_run=dry_run)
 
 
 def parse_args():
@@ -41,6 +42,10 @@ def parse_args():
     parser.add_argument(
         'repo',
         help='path to restic repository')
+    parser.add_argument(
+        '--no-eject',
+        help='do not eject the drive',
+        action='store_false', dest='eject')
     parser.add_argument(
         '--dry-run',
         help='dry run mode',
