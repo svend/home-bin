@@ -2,11 +2,7 @@
 
 set -e
 
-if command -v gpg2 >/dev/null 2>&1; then
-  GPG=gpg2
-elif command -v gpg >/dev/null 2>&1; then
-  GPG=gpg
-fi
+GPG=gpg
 
 is_uuid()
 {
