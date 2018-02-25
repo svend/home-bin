@@ -3,8 +3,8 @@
 import argparse
 import math
 import random
-import subprocess
 import re
+import subprocess
 import sys
 
 
@@ -30,8 +30,8 @@ def min_length(num_symbols, min_bits):
 def run(*, min_bits):
     '''Run application.'''
     words = get_words()
-    num = min_length(len(words), min_bits)
-    password = ' '.join(random.choice(words) for i in range(num))
+    length = min_length(len(words), min_bits)
+    password = ' '.join(random.choice(words) for i in range(length))
     print(password)
 
 
