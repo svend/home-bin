@@ -42,7 +42,7 @@ def run(*, repo, eject=True, dry_run=False):
     repo = os.path.normpath(repo)
     backup(repo, dry_run=dry_run)
     if eject:
-        eject(os.path.dirname(repo), dry_run=dry_run)
+        eject_drive(os.path.dirname(repo), dry_run=dry_run)
 
 
 def parse_args():
