@@ -3,7 +3,6 @@
 import argparse
 import math
 import random
-import re
 import subprocess
 import sys
 
@@ -11,13 +10,11 @@ import sys
 ASPELL_DICT = 'en_US'
 MIN_BITS = 44
 
-
 def get_words():
     '''Return a word list consisting of lowercase words.'''
-    only_lowercase = re.compile(r'[a-z]+$').match
     lines = subprocess.check_output(['aspell', 'dump', 'master', ASPELL_DICT],
                                     universal_newlines=True).splitlines()
-    words = [w for w in lines if only_lowercase(w)]
+    words = [w for w in lines if w.isalpha() and w.islower()]
     return words
 
 
