@@ -1,10 +1,44 @@
-#!/bin/sh
+#!/usr/bin/env python3
 
-set -e
+import argparse
+import os
+import subprocess
+import sys
 
-RESTIC_PASSWORD=$(gpg -d "$RESTIC_REPOSITORY".gpg || true)
-if [ -n "$RESTIC_PASSWORD" ]; then
-  export RESTIC_PASSWORD
-fi
 
-exec restic "$@"
+def run(repo=None):
+    command = sys.argv[1:]
+    if repo is None:
+        repo = os.environ.get('RESTIC_REPOSITORY')
+    password = None
+    if repo is not None:
+        repopath = os.path.normpath(repo)
+        gpgfile = f'{repopath}.gpg'
+        if os.path.isfile(gpgfile):
+            proc = subprocess.run(['gpg', '-d', gpgfile],
+                                  stdout=subprocess.PIPE,
+                                  universal_newlines=True)
+            password = proc.stdout.rstrip()
+    if password is None:
+        env = os.environ
+    else:
+        env = {'RESTIC_PASSWORD': password, **os.environ}
+    proc = subprocess.run(['restic'] + command, env=env)
+    return proc.returncode
+
+
+def parser():
+    '''Return the command line parser for the application.'''
+    parser = argparse.ArgumentParser(
+        usage='%(prog)s command [arguments]',
+        description='Wrap command heptio-authenticator-aws',
+        add_help=False)
+    parser.add_argument(
+        '-r', '--repo',
+        help='repository to backup to or restore from')
+    return parser
+
+
+if __name__ == '__main__':
+    (args, _) = parser().parse_known_args()
+    sys.exit(run(**vars(args)))
