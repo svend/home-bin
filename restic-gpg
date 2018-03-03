@@ -7,18 +7,24 @@ import subprocess
 import sys
 
 
-def run(repo=None):
+def get_password(repo):
+    '''Return the decrypted GPG password for repo.'''
     password = None
     if repo is None:
         repo = os.environ.get('RESTIC_REPOSITORY')
     if repo is not None:
-        repo = Path(repo)
-        gpgfile = repo.with_suffix('.gpg')
+        gpgfile = Path(repo).with_suffix('.gpg')
         if gpgfile.exists():
             proc = subprocess.run(['gpg', '-d', gpgfile],
                                   stdout=subprocess.PIPE,
                                   universal_newlines=True)
             password = proc.stdout.rstrip()
+    return password
+
+
+def run(repo=None):
+    '''Run the application.'''
+    password = get_password(repo)
     if password is None:
         env = os.environ
     else:
