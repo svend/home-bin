@@ -2,19 +2,19 @@
 
 import argparse
 import os
+from pathlib import Path
 import subprocess
 import sys
 
 
 def run(repo=None):
-    command = sys.argv[1:]
+    password = None
     if repo is None:
         repo = os.environ.get('RESTIC_REPOSITORY')
-    password = None
     if repo is not None:
-        repopath = os.path.normpath(repo)
-        gpgfile = f'{repopath}.gpg'
-        if os.path.isfile(gpgfile):
+        repo = Path(repo)
+        gpgfile = repo.with_suffix('.gpg')
+        if gpgfile.exists():
             proc = subprocess.run(['gpg', '-d', gpgfile],
                                   stdout=subprocess.PIPE,
                                   universal_newlines=True)
@@ -23,6 +23,7 @@ def run(repo=None):
         env = os.environ
     else:
         env = {'RESTIC_PASSWORD': password, **os.environ}
+    command = sys.argv[1:]
     proc = subprocess.run(['restic'] + command, env=env)
     return proc.returncode
 
