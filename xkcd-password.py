@@ -10,6 +10,7 @@ import sys
 ASPELL_DICT = 'en_US'
 MIN_BITS = 44
 
+
 def get_words():
     '''Return a word list consisting of lowercase words.'''
     lines = subprocess.check_output(['aspell', 'dump', 'master', ASPELL_DICT],
