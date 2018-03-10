@@ -2,6 +2,7 @@
 
 import argparse
 from datetime import datetime
+import json
 import os
 import subprocess
 import sys
@@ -13,12 +14,23 @@ DATE_FILE = os.path.expanduser('~/.backup-laptop-dates')
 
 def run_command(command, dry_run=False):
     command = ['echo'] + command if dry_run else command
-    subprocess.run(command, check=True)
+    return subprocess.run(command, check=True)
+
+
+def device_from_path(path, dry_run=False):
+    command = ['findmnt', '--json', '--target', path]
+    command = ['echo'] + command if dry_run else command
+    proc = subprocess.run(command, check=True, stdout=subprocess.PIPE)
+    j = json.loads(proc.stdout)
+    return j['filesystems'][0]['source']
 
 
 def eject_drive(path, dry_run=False):
     if sys.platform == 'darwin':
         run_command(['diskutil', 'eject', path], dry_run=dry_run)
+    elif sys.platform == 'linux':
+        dev = device_from_path(path)
+        run_command(['gpg-luks', 'close', dev], dry_run=dry_run)
 
 
 def targets():
