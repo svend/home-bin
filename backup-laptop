@@ -17,6 +17,13 @@ def run_command(command, dry_run=False):
     return subprocess.run(command, check=True)
 
 
+def notify(message, dry_run=False):
+    if sys.platform == 'darwin':
+        run_command(['terminal-notifier', '-message', message,
+                     '-group', 'backup-laptop'],
+                    dry_run=dry_run)
+
+
 def device_from_path(path, dry_run=False):
     command = ['findmnt', '--json', '--target', path]
     command = ['echo'] + command if dry_run else command
@@ -55,6 +62,7 @@ def run(*, repo, eject=True, dry_run=False):
     backup(repo, dry_run=dry_run)
     if eject:
         eject_drive(os.path.dirname(repo), dry_run=dry_run)
+    notify('Backup complete', dry_run=dry_run)
 
 
 def parse_args():
