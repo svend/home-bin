@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 import argparse
-from datetime import datetime, timedelta
 import json
 import os
 import subprocess
 import sys
 import time
+from datetime import datetime, timedelta
 
 TARGETS = ['~']
 PLATFORM_TARGETS = {'darwin': ['/nix', '/usr/local']}
@@ -23,21 +23,26 @@ def notify(message, dry_run=False):
         run_command(['terminal-notifier', '-message', message,
                      '-group', 'backup-laptop'],
                     dry_run=dry_run)
+    elif sys.platform == 'linux':
+        run_command(['notify-send', message], dry_run=dry_run)
 
 
 def device_from_path(path, dry_run=False):
     command = ['findmnt', '--json', '--target', path]
-    command = ['echo'] + command if dry_run else command
-    proc = subprocess.run(command, check=True, stdout=subprocess.PIPE)
-    j = json.loads(proc.stdout)
-    return j['filesystems'][0]['source']
+    if dry_run:
+        run_command(command, dry_run=dry_run)
+        return 'dry-run-device'
+    else:
+        proc = subprocess.run(command, check=True, stdout=subprocess.PIPE)
+        j = json.loads(proc.stdout)
+        return j['filesystems'][0]['source']
 
 
 def eject_drive(path, dry_run=False):
     if sys.platform == 'darwin':
         run_command(['diskutil', 'eject', path], dry_run=dry_run)
     elif sys.platform == 'linux':
-        dev = device_from_path(path)
+        dev = device_from_path(path, dry_run=dry_run)
         run_command(['gpg-luks', 'close', dev], dry_run=dry_run)
 
 

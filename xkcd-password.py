@@ -6,7 +6,6 @@ import random
 import subprocess
 import sys
 
-
 ASPELL_DICT = 'en_US'
 MIN_BITS = 44
 
