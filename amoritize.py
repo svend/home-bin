@@ -14,26 +14,22 @@ def montly_pi(*, amount, rate, years):
 
 def amoritize(*, amount, rate, years):
     pi = montly_pi(amount=amount, rate=rate, years=years)
-    total_pi = 0
     while amount > 0:
         interest = amount * rate / 12
         principal = pi - interest
-        amount = amount - principal
-        total_pi += pi
-        yield amount, principal, interest, total_pi
+        amount -= principal
+        yield amount, principal, interest
 
 
 def run(*, amount, rate, years):
     am = amoritize(amount=amount, rate=rate / 100, years=years)
 
-    fields = ['amount', 'principal', 'interest', 'PI', 'total_PI']
+    fields = ['amount', 'principal', 'interest', 'PI']
     print(f'{"mo":>3}', *[f'{v:>9}' for v in fields])
-    total_pi = 0
-    for month, (amount, principal, interest, total_pi) in \
-        islice(enumerate(am), None, None, 12):
+    for month, (amount, principal, interest) in islice(enumerate(am), None, None, 12):
         pi = principal + interest
         fields = [f'{v:>9.2f}'
-                  for v in (amount, principal, interest, pi, total_pi)]
+                  for v in (amount, principal, interest, pi)]
         print(f'{month + 1:>3}', *fields)
 
 
