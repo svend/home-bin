@@ -14,11 +14,14 @@ def montly_pi(*, amount, rate, years):
 
 def amoritize(*, amount, rate, years):
     pi = montly_pi(amount=amount, rate=rate, years=years)
-    while amount > 0:
+    while True:
         interest = amount * rate / 12
         principal = pi - interest
         amount -= principal
-        yield amount, principal, interest
+        if amount > 0:
+            yield amount, principal, interest
+        else:
+            break
 
 
 def run(*, amount, rate, years):
