@@ -12,7 +12,6 @@ use structopt::clap::AppSettings;
 
 const BEGIN: &'static str = "-----BEGIN";
 const END: &'static str = "-----END";
-const COMMAND: &'static str = "cat";
 
 /// Read certificates from stdin and run command on each one.
 #[derive(StructOpt, Debug)]
@@ -24,7 +23,7 @@ struct Opt {
     after: Option<String>,
 
     /// Command to run on each certificate
-    #[structopt(name = "COMMAND")]
+    #[structopt(name = "COMMAND", default_value="cat")]
     command: Vec<String>,
 }
 
@@ -32,7 +31,7 @@ fn run_command(cmd_and_args: &Vec<String>, stdin: &str) -> Result<(), Box<Error>
     let cmd = cmd_and_args.iter().nth(0);
     let args: Vec<_> = cmd_and_args.iter().skip(1).collect();
 
-    let mut child = Command::new(cmd.unwrap_or(&COMMAND.to_string()))
+    let mut child = Command::new(cmd.unwrap_or(&"cat".to_string()))
         .args(&args)
         .stdin(Stdio::piped())
         .spawn()?;
