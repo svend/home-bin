@@ -1,12 +1,32 @@
 #!/usr/bin/env run-cargo-script
-use std::env;
+// cargo-deps: structopt="0.2"
+
+#[macro_use]
+extern crate structopt;
+
 use std::io::prelude::*;
 use std::io::{self, Error};
 use std::process::{self, Command, Stdio};
+use structopt::StructOpt;
+use structopt::clap::AppSettings;
 
 const BEGIN: &'static str = "-----BEGIN";
 const END: &'static str = "-----END";
 const COMMAND: &'static str = "cat";
+
+/// Read certificates from stdin and run command on each one.
+#[derive(StructOpt, Debug)]
+#[structopt(author="Svend Sorensen",
+            raw(global_settings = "&[AppSettings::TrailingVarArg]"))]
+struct Opt {
+    /// After
+    #[structopt(long = "after")]
+    after: Option<String>,
+
+    /// Command
+    #[structopt(name = "COMMAND")]
+    command: Vec<String>,
+}
 
 fn run_command(cmd_and_args: &Vec<String>, stdin: &str) -> Result<(), Box<Error>> {
     let cmd = cmd_and_args.iter().nth(0);
@@ -22,9 +42,9 @@ fn run_command(cmd_and_args: &Vec<String>, stdin: &str) -> Result<(), Box<Error>
     Ok(())
 }
 
-fn run() -> Result<(), Box<Error>> {
+fn run(command: &Vec<String>, after: Option<String>) -> Result<(), Box<Error>> {
     // Drop name of program
-    let command: Vec<_> = env::args().skip(1).collect();
+    // let command: Vec<_> = env::args().skip(1).collect();
 
     let stdin = io::stdin();
     let mut cert = Vec::new();
@@ -35,6 +55,9 @@ fn run() -> Result<(), Box<Error>> {
             cert.push(l.clone());
             if l.starts_with(END) {
                 run_command(&command, &format!("{}\n", cert.join("\n")))?;
+                if let Some(s) = after.as_ref() {
+                    println!("{}", s);
+                }
                 cert.clear();
             }
         }
@@ -43,12 +66,14 @@ fn run() -> Result<(), Box<Error>> {
 }
 
 fn main() {
-    if let Err(err) = run() {
+    let opt = Opt::from_args();
+    if let Err(err) = run(&opt.command, opt.after) {
         println!("error: {}", err);
         process::exit(1);
     }
 }
 
+#[cfg(test)]
 fn add(x: i32, y: i32) -> i32 {
     return x + y;
 }
