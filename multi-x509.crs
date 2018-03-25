@@ -5,7 +5,7 @@
 extern crate structopt;
 
 use std::io::prelude::*;
-use std::io::{self, Error};
+use std::io::{self, Error, ErrorKind};
 use std::process::{self, Command, Stdio};
 use structopt::StructOpt;
 use structopt::clap::AppSettings;
@@ -27,11 +27,11 @@ struct Opt {
     command: Vec<String>,
 }
 
-fn run_command(cmd_and_args: &Vec<String>, stdin: &str) -> Result<(), Box<Error>> {
-    let cmd = cmd_and_args.iter().nth(0);
+fn run_command(cmd_and_args: &Vec<String>, stdin: &str) -> Result<(), Error> {
+    let cmd = cmd_and_args.iter().nth(0).ok_or(Error::new(ErrorKind::InvalidInput, "command is required"))?;
     let args: Vec<_> = cmd_and_args.iter().skip(1).collect();
 
-    let mut child = Command::new(cmd.unwrap_or(&"cat".to_string()))
+    let mut child = Command::new(cmd)
         .args(&args)
         .stdin(Stdio::piped())
         .spawn()?;
@@ -41,7 +41,7 @@ fn run_command(cmd_and_args: &Vec<String>, stdin: &str) -> Result<(), Box<Error>
     Ok(())
 }
 
-fn run(command: &Vec<String>, after: Option<String>) -> Result<(), Box<Error>> {
+fn run(command: &Vec<String>, after: Option<String>) -> Result<(), Error> {
     // Drop name of program
     // let command: Vec<_> = env::args().skip(1).collect();
 
