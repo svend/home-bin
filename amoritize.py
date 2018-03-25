@@ -29,7 +29,7 @@ def run(*, amount, rate, years):
 
     fields = ['amount', 'principal', 'interest', 'PI']
     print(f'{"mo":>3}', *[f'{v:>9}' for v in fields])
-    for month, (amount, principal, interest) in islice(enumerate(am), None, None, 12):
+    for month, (amount, principal, interest) in islice(enumerate(am), None, None, 1):
         pi = principal + interest
         fields = [f'{v:>9.2f}'
                   for v in (amount, principal, interest, pi)]
