@@ -16,9 +16,8 @@ const COMMAND: &'static str = "cat";
 
 /// Read certificates from stdin and run command on each one.
 #[derive(StructOpt, Debug)]
-#[structopt(
-    author="Svend Sorensen",
-    raw(global_settings = "&[AppSettings::TrailingVarArg]"))]
+#[structopt(author="Svend Sorensen",
+            raw(global_settings = "&[AppSettings::TrailingVarArg]"))]
 struct Opt {
     /// Text to print after each certificate
     #[structopt(long = "after")]
@@ -56,8 +55,8 @@ fn run(command: &Vec<String>, after: Option<String>) -> Result<(), Box<Error>> {
             cert.push(l.clone());
             if l.starts_with(END) {
                 run_command(&command, &format!("{}\n", cert.join("\n")))?;
-                if let Some(s) = after.as_ref() {
-                    println!("{}", s);
+                if let Some(after) = after.as_ref() {
+                    println!("{}", after);
                 }
                 cert.clear();
             }
