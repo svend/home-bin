@@ -5,7 +5,7 @@ import sort_ip
 
 
 def gen_sorted_ips():
-    MAX_IP = 2**32
+    MAX_IP = 2 ** 32
     ints = sorted([random.randrange(0, MAX_IP) for _ in range(10)])
     return [str(ipaddress.ip_address(i)) for i in ints]
 

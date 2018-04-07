@@ -20,6 +20,7 @@ def amoritize(*, amount, rate, years):
         amount -= principal
         if amount > 0:
             yield amount, principal, interest
+
         else:
             break
 
@@ -27,32 +28,28 @@ def amoritize(*, amount, rate, years):
 def run(*, amount, rate, years):
     am = amoritize(amount=amount, rate=rate / 100, years=years)
 
-    fields = ['amount', 'principal', 'interest', 'PI']
-    print(f'{"mo":>3}', *[f'{v:>9}' for v in fields])
+    fields = ["amount", "principal", "interest", "PI"]
+    print(f'{"mo":>3}', *[f"{v:>9}" for v in fields])
     for month, (amount, principal, interest) in islice(enumerate(am), None, None, 1):
         pi = principal + interest
-        fields = [f'{v:>9.2f}'
-                  for v in (amount, principal, interest, pi)]
-        print(f'{month + 1:>3}', *fields)
+        fields = [f"{v:>9.2f}" for v in (amount, principal, interest, pi)]
+        print(f"{month + 1:>3}", *fields)
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        usage='%(prog)s [options] [command]',
-        description='''Print amorization table''',
-        argument_default=argparse.SUPPRESS)
+        usage="%(prog)s [options] [command]",
+        description="""Print amorization table""",
+        argument_default=argparse.SUPPRESS,
+    )
+    parser.add_argument("--amount", help="loan ammount", type=int, required=True)
     parser.add_argument(
-        '--amount', help='loan ammount',
-        type=int, required=True)
-    parser.add_argument(
-        '--rate', help='interest rate as percentage',
-        type=float, required=True)
-    parser.add_argument(
-        '--years', help='loan period in years',
-        type=int, required=True)
+        "--rate", help="interest rate as percentage", type=float, required=True
+    )
+    parser.add_argument("--years", help="loan period in years", type=int, required=True)
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = parse_args()
     sys.exit(run(**vars(args)))
