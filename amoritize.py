@@ -47,7 +47,7 @@ def parse_args() -> argparse.Namespace:
         description="""Print amorization table""",
         argument_default=argparse.SUPPRESS,
     )
-    parser.add_argument("--amount", help="loan ammount", type=float, required=True)
+    parser.add_argument("--amount", help="amount of loan", type=float, required=True)
     parser.add_argument(
         "--rate", help="interest rate as percentage", type=float, required=True
     )
