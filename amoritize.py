@@ -28,7 +28,7 @@ def amoritize(
             break
 
 
-def run(amount: float, rate: float, years: int):
+def run(amount: float, rate: float, years: int) -> int:
     am = amoritize(amount=amount, rate=rate / 100, years=years)
     fields = ["amount", "principal", "interest", "PI"]
     print(f'{"mo":>3}', *[f"{v:>9}" for v in fields])
@@ -37,6 +37,8 @@ def run(amount: float, rate: float, years: int):
         pi = principal + interest
         fields = [f"{v:>9.2f}" for v in (amount, principal, interest, pi)]
         print(f"{month + 1:>3}", *fields)
+
+    return 0
 
 
 def parse_args() -> argparse.Namespace:
