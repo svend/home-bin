@@ -5,8 +5,11 @@ import fileinput
 import ipaddress
 import sys
 
+from typing import Iterable, List, Optional
 
-def sort_ips(ips):
+
+def sort_ips(ips: Iterable[str]) -> List[str]:
+    """Return sorted list of `ips`."""
 
     def sortfn(s):
         return ipaddress.ip_address(s.strip())
@@ -14,12 +17,12 @@ def sort_ips(ips):
     return sorted(ips, key=sortfn)
 
 
-def run(*, files=None):
+def run(files: Optional[List[str]] = None):
     lines = sort_ips(fileinput.input(files=files))
     print("".join(lines), end="")
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Sort IP addresses", argument_default=argparse.SUPPRESS
     )
