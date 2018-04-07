@@ -3,16 +3,19 @@
 import argparse
 import sys
 from itertools import islice
+from typing import Iterator, Tuple
 
 
-def montly_pi(*, amount, rate, years):
+def montly_pi(amount: float, rate: float, years: int) -> float:
     n = years * 12
     r = rate / 12
     pi = (r * amount * (1 + r) ** n) / ((1 + r) ** n - 1)
     return pi
 
 
-def amoritize(*, amount, rate, years):
+def amoritize(
+    amount: float, rate: float, years: int
+) -> Iterator[Tuple[float, float, float]]:
     pi = montly_pi(amount=amount, rate=rate, years=years)
     while True:
         interest = amount * rate / 12
@@ -25,7 +28,7 @@ def amoritize(*, amount, rate, years):
             break
 
 
-def run(*, amount, rate, years):
+def run(amount: float, rate: float, years: int):
     am = amoritize(amount=amount, rate=rate / 100, years=years)
 
     fields = ["amount", "principal", "interest", "PI"]
@@ -36,7 +39,7 @@ def run(*, amount, rate, years):
         print(f"{month + 1:>3}", *fields)
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         usage="%(prog)s [options] [command]",
         description="""Print amorization table""",
