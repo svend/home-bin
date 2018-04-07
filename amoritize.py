@@ -30,10 +30,10 @@ def amoritize(
 
 def run(amount: float, rate: float, years: int):
     am = amoritize(amount=amount, rate=rate / 100, years=years)
-
     fields = ["amount", "principal", "interest", "PI"]
     print(f'{"mo":>3}', *[f"{v:>9}" for v in fields])
-    for month, (amount, principal, interest) in islice(enumerate(am), None, None, 1):
+    # islice start: https://github.com/python/typeshed/pull/2031
+    for month, (amount, principal, interest) in islice(enumerate(am), 0, None, 1):
         pi = principal + interest
         fields = [f"{v:>9.2f}" for v in (amount, principal, interest, pi)]
         print(f"{month + 1:>3}", *fields)
@@ -45,7 +45,7 @@ def parse_args() -> argparse.Namespace:
         description="""Print amorization table""",
         argument_default=argparse.SUPPRESS,
     )
-    parser.add_argument("--amount", help="loan ammount", type=int, required=True)
+    parser.add_argument("--amount", help="loan ammount", type=float, required=True)
     parser.add_argument(
         "--rate", help="interest rate as percentage", type=float, required=True
     )
