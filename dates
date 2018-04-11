@@ -2,7 +2,7 @@
 
 TZS="UTC Europe/Budapest America/Los_Angeles America/New_York"
 
-DATE="$1"
+DATE="${1:-now}"
 shift
 
 date -d "$DATE" "$@"
