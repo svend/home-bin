@@ -4,12 +4,11 @@
 #[macro_use]
 extern crate structopt;
 
-use std::path::PathBuf;
 use structopt::StructOpt;
 
 /// Print amortization table
 #[derive(StructOpt, Debug)]
-#[structopt(author="Svend Sorensen")]
+#[structopt(author = "Svend Sorensen")]
 struct Opt {
     /// Amount
     #[structopt(long = "amount")]
@@ -46,7 +45,12 @@ fn main() {
         let interest = amount * rate / 12.0;
         let principal = pi - interest;
         amount = amount - principal - extra;
-        if amount < 0.00 { break; }
-        println!("{:>3} {:.2} {:.2} {:.2} {:.2}", i, amount, principal, interest, pi);
+        if amount < 0.00 {
+            break;
+        }
+        println!(
+            "{:>3} {:.2} {:.2} {:.2} {:.2}",
+            i, amount, principal, interest, pi
+        );
     }
 }
