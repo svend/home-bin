@@ -15,26 +15,25 @@ const END: &'static str = "-----END";
 
 /// Read certificates from stdin and run command on each one.
 #[derive(StructOpt, Debug)]
-#[structopt(author="Svend Sorensen",
-            raw(global_settings = "&[AppSettings::TrailingVarArg]"))]
+#[structopt(author = "Svend Sorensen", raw(global_settings = "&[AppSettings::TrailingVarArg]"))]
 struct Opt {
     /// Text to print after each certificate
     #[structopt(long = "after")]
     after: Option<String>,
 
     /// Command to run on each certificate
-    #[structopt(name = "COMMAND", default_value="cat")]
+    #[structopt(name = "COMMAND", default_value = "cat")]
     command: Vec<String>,
 }
 
 fn run_command(cmd_and_args: &Vec<String>, stdin: &str) -> Result<(), Error> {
-    let cmd = cmd_and_args.iter().nth(0).ok_or(Error::new(ErrorKind::InvalidInput, "command is required"))?;
+    let cmd = cmd_and_args
+        .iter()
+        .nth(0)
+        .ok_or(Error::new(ErrorKind::InvalidInput, "command is required"))?;
     let args: Vec<_> = cmd_and_args.iter().skip(1).collect();
 
-    let mut child = Command::new(cmd)
-        .args(&args)
-        .stdin(Stdio::piped())
-        .spawn()?;
+    let mut child = Command::new(cmd).args(&args).stdin(Stdio::piped()).spawn()?;
 
     child.stdin.as_mut().unwrap().write_all(stdin.as_bytes())?;
     child.wait()?;
