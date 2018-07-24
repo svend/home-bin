@@ -13,6 +13,10 @@ def parse_args():
         '--multi',
         help='Process multiple YAML documents',
         action='store_true')
+    parser.add_argument(
+        '--sort',
+        help='Sort JSON keys',
+        action='store_true')
     return parser.parse_args()
 
 
@@ -20,8 +24,8 @@ if __name__ == '__main__':
     args = parse_args()
     if args.multi:
         data = yaml.load_all(sys.stdin)
-        json = json.dumps(list(data))
+        data = list(data)
     else:
         data = yaml.load(sys.stdin)
-        json = json.dumps(data)
+    json = json.dumps(data, sort_keys=args.sort)
     print(json)
