@@ -1,3 +1,4 @@
 #!/bin/sh
 
-rustup run nightly cargo clippy "$@"
+# https://github.com/rust-lang-nursery/rust-clippy/tree/d99cea0f16633556871a59500c610782b07233b9#as-a-cargo-subcommand-cargo-clippy
+cargo +nightly clippy "$@"
