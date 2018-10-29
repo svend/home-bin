@@ -4,15 +4,23 @@ import argparse
 import subprocess
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Get certificates')
-    parser.add_argument('host', type=str)
-    parser.add_argument('--port', default=443, type=int)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Get certificates")
+    parser.add_argument("host", type=str)
+    parser.add_argument("--port", default=443, type=int)
     args = parser.parse_args()
 
     ret = subprocess.check_output(
-       ['openssl', 's_client', '-showcerts', '-servername', args.host,
-        '-connect', '{}:{}'.format(args.host, args.port)],
-       stdin=subprocess.DEVNULL,
-       universal_newlines=True)
+        [
+            "openssl",
+            "s_client",
+            "-showcerts",
+            "-servername",
+            args.host,
+            "-connect",
+            "{}:{}".format(args.host, args.port),
+        ],
+        stdin=subprocess.DEVNULL,
+        universal_newlines=True,
+    )
     print(ret)
