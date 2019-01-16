@@ -29,7 +29,7 @@ def run(*, min_bits):
     """Run application."""
     words = get_words()
     length = min_length(len(words), min_bits)
-    password = " ".join(random.choice(words) for i in range(length))
+    password = " ".join(random.choice(words) for _ in range(length))
     print(password)
 
 
