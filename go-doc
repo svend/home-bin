@@ -11,7 +11,7 @@ HOST=127.0.0.1:6060
 
 volumes=()
 # Add the local package
-volumes+=("--volume" "$(pwd):/go/src/$(go list -m):ro")
+volumes+=("--volume" "$(git rev-parse --show-toplevel):/go/src/$(go list -m):ro")
 # Add package dependencies
 while read -r volume; do
   volumes+=("--volume" "$volume")
