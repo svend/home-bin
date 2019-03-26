@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Start `go doc` server inside docker for a package which uses go modules. This
+# should be run from the root directory of the package.
+
+set -e
+
+CONTAINER_NAME=godoc
+IMAGE=golang:1.12.1
+HOST=127.0.0.1:6060
+
+volumes=()
+# Add the local package
+volumes+=("--volume" "$(pwd):/go/src/$(go list -m):ro")
+# Add package dependencies
+while read -r volume; do
+  volumes+=("--volume" "$volume")
+done < <(go mod download -json | jq -r '.Dir + ":/go/src/" + .Path + ":ro"')
+
+docker rm --force "$CONTAINER_NAME" || true
+
+docker run \
+  --name "$CONTAINER_NAME" \
+  --detach \
+  --publish "$HOST:6060" \
+  "${volumes[@]}" \
+  "${IMAGE}" \
+  godoc -http :6060 "$@"
+
+echo "http://$HOST"
