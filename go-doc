@@ -27,4 +27,4 @@ docker run \
   "${IMAGE}" \
   godoc -http :6060 "$@"
 
-echo "http://$HOST"
+python -mwebbrowser "http://$HOST/pkg"
