@@ -2,7 +2,7 @@
 
 system="$(sw_vers -productName) $(sw_vers -productVersion)"
 nix_version="$(nix-env --version)"
-nixpkgs_version="$(nix-instantiate --eval '<nixpkgs>' -A lib.nixpkgsVersion)"
+nixpkgs_version="$(nix-instantiate --eval '<nixpkgs>' -A lib.version)"
 
 cat <<EOF
 ## Issue description
