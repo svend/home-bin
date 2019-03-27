@@ -1,9 +1,5 @@
 #!/bin/sh
 
-system="$(sw_vers -productName) $(sw_vers -productVersion)"
-nix_version="$(nix-env --version)"
-nixpkgs_version="$(nix-instantiate --eval '<nixpkgs>' -A lib.version)"
-
 cat <<EOF
 ## Issue description
 
@@ -14,8 +10,5 @@ cat <<EOF
 
 
 ## Technical details
-
-* System: $system
-* Nix version: $nix_version
-* Nixpkgs version: $nixpkgs_version
 EOF
+nix-shell -p nix-info --run "nix-info -m"
