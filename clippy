@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# https://github.com/rust-lang-nursery/rust-clippy/tree/1b89724b4889aef631b40d52c0943bdc28e04d1d#as-a-cargo-subcommand-cargo-clippy
-# rustup component add clippy
-cargo clippy "$@"
