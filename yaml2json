@@ -23,9 +23,9 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     if args.multi:
-        data = yaml.load_all(sys.stdin)
+        data = yaml.load_all(sys.stdin, Loader=yaml.FullLoader)
         data = list(data)
     else:
-        data = yaml.load(sys.stdin)
+        data = yaml.load(sys.stdin, Loader=yaml.FullLoader)
     json = json.dumps(data, sort_keys=args.sort)
     print(json)
