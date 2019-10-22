@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rsync -av \
+  --copy-links \
+  --delete \
+  "$HOME"/.nix-profile/share/fonts/*/ \
+  "$HOME"/Library/Fonts
