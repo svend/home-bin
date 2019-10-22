@@ -1,4 +1,9 @@
 #!/bin/sh
+set -e
+
+FONT_DIR="$HOME"/Library/Fonts
+
+[ -d "$FONT_DIR" ] || exit 1
 
 rsync -av \
   --copy-links \
