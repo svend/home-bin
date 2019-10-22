@@ -9,7 +9,7 @@ import time
 from datetime import datetime, timedelta
 
 TARGETS = ["~"]
-PLATFORM_TARGETS = {"darwin": ["/nix", "/usr/local"]}
+PLATFORM_TARGETS = {"darwin": ["/usr/local"]}
 DATE_FILE = os.path.expanduser("~/.backup-laptop-dates")
 
 
