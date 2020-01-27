@@ -54,6 +54,7 @@ def targets():
 
 def backup(repo, dry_run):
     os.environ["RESTIC_REPOSITORY"] = repo
+    start_time = time.time()
     run_command(
         [
             "restic-gpg",
@@ -65,14 +66,17 @@ def backup(repo, dry_run):
         + targets(),
         dry_run=dry_run,
     )
+    end_time = time.time()
+    duration = timedelta(seconds=int(end_time - start_time))
     if not dry_run:
         with open(DATE_FILE, "a") as f:
             timestamp = datetime.utcnow().isoformat()
-            f.write(f"{timestamp} {repo}\n")
+            f.write(f"{timestamp} backup: {repo} (duration: {duration})\n")
 
 
 def forget(repo, dry_run):
     os.environ["RESTIC_REPOSITORY"] = repo
+    start_time = time.time()
     run_command(
         [
             "restic-gpg",
@@ -86,8 +90,15 @@ def forget(repo, dry_run):
             "12",
             "--keep-yearly",
             "75",
-        ]
+        ],
+        dry_run=dry_run
     )
+    end_time = time.time()
+    duration = timedelta(seconds=int(end_time - start_time))
+    if not dry_run:
+        with open(DATE_FILE, "a") as f:
+            timestamp = datetime.utcnow().isoformat()
+            f.write(f"{timestamp} forget: {repo} (duration: {duration})\n")
 
 
 def run(*, repo, eject=True, dry_run=False):
