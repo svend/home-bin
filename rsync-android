@@ -2,6 +2,7 @@
 set -e
 
 HOST=$1
+shift
 
 rsync \
   --recursive \
@@ -9,5 +10,6 @@ rsync \
   --verbose \
   --exclude .aux \
   --exclude thumbnails \
+  "$@" \
   $HOST:'/storage/*/DCIM/Camera/' \
   $HOME/media/photos/$HOST
