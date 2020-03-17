@@ -1,15 +1,18 @@
-#!/bin/sh
+#!/bin/bash
 
-TZS="UTC Europe/Budapest America/Los_Angeles America/New_York"
+TZS=(UTC Europe/Budapest America/Los_Angeles America/New_York)
 
 DATE="${1:-now}"
 shift
 
-date -d "$DATE" "$@"
+print_dates() {
+  echo -n "default:	"
+  date -d "$DATE" "$@"
 
-for TZ in $TZS; do
-  (
-    echo "$TZ: "
+  for TZ in "${TZS[@]}"; do
+    echo -n "$TZ:	"
     TZ=$TZ date -d "$DATE" "$@"
-  ) | xargs
-done
+  done
+}
+
+print_dates "$@" | column -s'	' -t
