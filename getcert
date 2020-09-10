@@ -8,19 +8,23 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get certificates")
     parser.add_argument("host", type=str)
     parser.add_argument("--port", default=443, type=int)
+    parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    ret = subprocess.check_output(
-        [
-            "openssl",
-            "s_client",
-            "-showcerts",
-            "-servername",
-            args.host,
-            "-connect",
-            "{}:{}".format(args.host, args.port),
-        ],
-        stdin=subprocess.DEVNULL,
-        universal_newlines=True,
-    )
-    print(ret)
+    cmd = [
+        "openssl",
+        "s_client",
+        "-showcerts",
+        "-servername",
+        args.host,
+        "-connect",
+        "{}:{}".format(args.host, args.port),
+    ]
+
+    if args.dry_run:
+        print(" ".join(cmd + ["2>/dev/null", "</dev/null"]))
+    else:
+        ret = subprocess.check_output(
+            cmd, stdin=subprocess.DEVNULL, universal_newlines=True,
+        )
+        print(ret)
