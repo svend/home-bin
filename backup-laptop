@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import itertools
 import os
 import subprocess
 import sys
@@ -11,6 +12,7 @@ from datetime import datetime, timedelta
 TARGETS = ["~"]
 PLATFORM_TARGETS = {"darwin": ["/usr/local"]}
 DATE_FILE = os.path.expanduser("~/.backup-laptop-dates")
+EXCLUDES = ["~/.rnd", "~/Library/*"]
 
 
 def run_command(command, dry_run=False):
@@ -33,10 +35,10 @@ def device_from_path(path, dry_run=False):
     if dry_run:
         run_command(command, dry_run=dry_run)
         return "dry-run-device"
-    else:
-        proc = subprocess.run(command, check=True, stdout=subprocess.PIPE)
-        j = json.loads(proc.stdout)
-        return j["filesystems"][0]["source"]
+
+    proc = subprocess.run(command, check=True, stdout=subprocess.PIPE)
+    j = json.loads(proc.stdout)
+    return j["filesystems"][0]["source"]
 
 
 def eject_drive(path, dry_run=False):
@@ -54,16 +56,13 @@ def targets():
 
 def backup(repo, dry_run):
     os.environ["RESTIC_REPOSITORY"] = repo
+
+    excludes = [["--exclude", os.path.expanduser(e)] for e in EXCLUDES]
+    excludes = list(itertools.chain.from_iterable(excludes))
+
     start_time = time.time()
     run_command(
-        [
-            "restic-gpg",
-            "backup",
-            "--one-file-system",
-            "--exclude",
-            os.path.expanduser("~/.rnd"),
-        ]
-        + targets(),
+        ["restic-gpg", "backup", "--one-file-system",] + excludes + targets(),
         dry_run=dry_run,
     )
     end_time = time.time()
@@ -91,7 +90,7 @@ def forget(repo, dry_run):
             "--keep-yearly",
             "75",
         ],
-        dry_run=dry_run
+        dry_run=dry_run,
     )
     end_time = time.time()
     duration = timedelta(seconds=int(end_time - start_time))
