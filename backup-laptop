@@ -14,7 +14,13 @@ PLATFORM_TARGETS = {"darwin": ["/usr/local"]}
 DATE_FILE = os.path.expanduser("~/.backup-laptop-dates")
 # macOS has restrictions for access for paths under ~/Library. Exclude the
 # whole thing. https://github.com/restic/restic/issues/2051
-EXCLUDES = ["~/.rnd", "~/Library/*", "~/Pictures/Photos Library.photoslibrary/*"]
+EXCLUDES = [
+    "~/.cargo",
+    "~/.rnd",
+    "~/Library",
+    "~/Pictures/Photos Library.photoslibrary",
+    "~/go",
+]
 
 
 def run_command(command, dry_run=False):
@@ -102,14 +108,16 @@ def forget(repo, dry_run):
             f.write(f"{timestamp} forget: {repo} (duration: {duration})\n")
 
 
-def run(*, repo, eject=True, dry_run=False):
+def run(*, repo, do_eject=True, do_backup=True, do_prune=True, dry_run=False):
     repo = os.path.normpath(repo)
     start_time = time.time()
-    backup(repo, dry_run=dry_run)
-    forget(repo, dry_run=dry_run)
+    if do_backup:
+        backup(repo, dry_run=dry_run)
+    if do_prune:
+        forget(repo, dry_run=dry_run)
     end_time = time.time()
     duration = timedelta(seconds=int(end_time - start_time))
-    if eject:
+    if do_eject:
         eject_drive(os.path.dirname(repo), dry_run=dry_run)
     notify(f"Backup complete ({duration})", dry_run=dry_run)
 
@@ -120,7 +128,22 @@ def parse_args():
     )
     parser.add_argument("repo", help="path to restic repository")
     parser.add_argument(
-        "--no-eject", help="do not eject the drive", action="store_false", dest="eject"
+        "--no-eject",
+        help="do not eject the drive",
+        action="store_false",
+        dest="do_eject",
+    )
+    parser.add_argument(
+        "--no-backup",
+        help="do not run restic backup",
+        action="store_false",
+        dest="do_backup",
+    )
+    parser.add_argument(
+        "--no-prune",
+        help="do not run restic prune/foget",
+        action="store_false",
+        dest="do_prune",
     )
     parser.add_argument("--dry-run", help="dry run mode", action="store_true")
     return parser.parse_args()
